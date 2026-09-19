@@ -1,0 +1,2726 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>IA Princesse V13.2 · Openi.ia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060d;--glass:rgba(20,22,42,.72);--glass2:rgba(28,30,56,.66);--line:rgba(255,255,255,.10);
+  --text:#f4f2ff;--muted:#9a9ac4;--pink:#ff4ecd;--violet:#8b5cff;--cyan:#31e6ff;--gold:#ffd36e;--danger:#ff5f7a;
+  --grad:linear-gradient(135deg,#ff4ecd,#8b5cff 45%,#31e6ff);
+}
+:root:not([data-theme="light"]){color-scheme:dark}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#05060d}}
+:root[data-theme="dark"]{--bg:#05060d}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:-30%;z-index:-2;
+  background:radial-gradient(45% 40% at 20% 20%,rgba(255,78,205,.28),transparent 60%),
+             radial-gradient(45% 40% at 80% 10%,rgba(139,92,255,.30),transparent 60%),
+             radial-gradient(50% 45% at 60% 90%,rgba(49,230,255,.20),transparent 60%);
+  filter:blur(40px);animation:aurora 18s ease-in-out infinite alternate}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1px);background-size:26px 26px;opacity:.5}
+@keyframes aurora{0%{transform:translate3d(-3%,-2%,0) scale(1)}100%{transform:translate3d(4%,3%,0) scale(1.15)}}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+button:disabled{opacity:.5;cursor:not-allowed}
+.hidden{display:none!important}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:9px}
+h1,h2,h3,.brand,.title,.logo{font-family:Outfit,Inter,sans-serif}
+.gr{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ===== AUTH ===== */
+.auth{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:18px}
+.auth-card{width:min(440px,100%);background:var(--glass);backdrop-filter:blur(26px);border:1px solid var(--line);
+  border-radius:28px;padding:28px;box-shadow:0 40px 120px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.12)}
+.logo{text-align:center;font-size:clamp(28px,7vw,38px);font-weight:900;letter-spacing:-.5px}
+.crown{display:block;text-align:center;font-size:44px;filter:drop-shadow(0 6px 22px rgba(255,78,205,.6));animation:float 4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-8px)}}
+.sub{text-align:center;color:var(--muted);margin:8px 0 20px;font-size:14px}
+.tabs{display:flex;gap:8px;background:rgba(0,0,0,.3);padding:5px;border-radius:15px;border:1px solid var(--line)}
+.tabs button{flex:1;border-radius:11px;padding:11px;color:var(--muted);font-weight:600;transition:.2s}
+.tabs button.active{background:var(--grad);color:#0a0715;box-shadow:0 8px 24px rgba(139,92,255,.4)}
+.field{width:100%;margin-top:12px;padding:14px 16px;border-radius:14px;border:1px solid var(--line);
+  background:rgba(0,0,0,.35);outline:0;transition:.2s}
+.field:focus{border-color:var(--violet);box-shadow:0 0 0 4px rgba(139,92,255,.18)}
+.field::placeholder{color:#6f6f9c}
+.pwwrap{position:relative}
+.pwwrap .field{padding-right:44px}
+.pwtoggle{position:absolute;right:5px;top:50%;transform:translateY(-50%);padding:7px 9px;border-radius:9px;color:var(--muted);font-size:15px;line-height:1}
+.pwtoggle:hover{background:rgba(255,255,255,.08);color:#fff}
+.pwstrength{height:4px;border-radius:3px;background:rgba(255,255,255,.1);margin-top:8px;overflow:hidden}
+.pwstrength i{display:block;height:100%;width:0;border-radius:3px;transition:width .2s,background .2s}
+.mainbtn{border-radius:14px;padding:13px 18px;background:var(--grad);color:#0a0715;font-weight:800;
+  box-shadow:0 10px 30px rgba(139,92,255,.35);transition:transform .15s,filter .2s}
+.mainbtn:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.08)}
+.ghost{border-radius:14px;padding:11px 16px;background:rgba(255,255,255,.07);border:1px solid var(--line);font-weight:600}
+.ghost:hover{background:rgba(255,255,255,.13)}
+.dangerbtn{background:linear-gradient(135deg,#ff5f7a,#c0304a);color:#fff}
+.full{width:100%;margin-top:16px}
+.msg{min-height:18px;color:var(--danger);font-size:13px;text-align:center;margin-top:10px}
+
+/* ===== APP ===== */
+.app{min-height:100dvh;display:flex}
+.side{width:262px;flex:none;padding:18px 14px;display:flex;flex-direction:column;gap:3px;
+  background:rgba(10,10,24,.72);backdrop-filter:blur(22px);border-right:1px solid var(--line)}
+.brand{font-size:21px;font-weight:900;padding:6px 10px 20px;display:flex;align-items:center;justify-content:space-between}
+.nav{width:100%;text-align:left;padding:12px 14px;border-radius:14px;color:#b6b6dd;font-weight:600;
+  display:flex;gap:10px;align-items:center;border:1px solid transparent;transition:.18s}
+.nav:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav.active{background:linear-gradient(90deg,rgba(255,78,205,.22),rgba(139,92,255,.16));border-color:rgba(255,78,205,.35);color:#fff}
+.nav .dot{margin-left:auto;font-size:11px;color:var(--cyan)}
+.logout{margin-top:auto;color:#ff8ea0}
+.content{flex:1;min-width:0;display:flex;flex-direction:column;min-height:100dvh}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 22px;
+  background:rgba(8,8,20,.6);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.title{font-size:20px;font-weight:800}
+.small{font-size:12.5px;color:var(--muted)}
+.section{padding:20px;display:grid;gap:16px;max-width:980px;width:100%;margin:0 auto}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:22px;padding:20px;backdrop-filter:blur(18px)}
+.item{background:var(--glass2);border:1px solid var(--line);border-radius:18px;padding:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.badge{padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid var(--line);font-size:12px;font-weight:600}
+.badge.ok{background:rgba(49,230,255,.14);border-color:rgba(49,230,255,.4);color:var(--cyan)}
+.menu{display:none}
+.overlay{display:none}
+
+/* ===== CHAT ===== */
+.chat-wrap{flex:1;overflow-y:auto;padding:22px;position:relative}
+.chat{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.bubble{max-width:82%;padding:14px 17px;border-radius:20px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word;
+  animation:pop .25s ease;font-size:15px}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}}
+.bubble.me{align-self:flex-end;background:var(--grad);color:#0a0715;font-weight:500;border-bottom-right-radius:7px}
+.bubble.ai{align-self:flex-start;background:var(--glass2);border:1px solid var(--line);border-bottom-left-radius:7px}
+.bubble code{background:rgba(0,0,0,.45);padding:2px 6px;border-radius:6px;font-size:13px}
+.bubble pre{background:rgba(0,0,0,.5);padding:12px;border-radius:12px;overflow-x:auto;border:1px solid var(--line)}
+.empty{text-align:center;color:var(--muted);padding:60px 20px;line-height:1.8}
+.composer{padding:14px 18px 20px;background:linear-gradient(transparent,rgba(5,6,13,.9) 30%);position:sticky;bottom:0}
+.composerRow{max-width:860px;margin:0 auto;display:flex;gap:10px;align-items:flex-end;
+  background:var(--glass);border:1px solid var(--line);border-radius:22px;padding:9px;backdrop-filter:blur(18px)}
+textarea#input{flex:1;height:46px;max-height:150px;resize:none;border:0;background:transparent;outline:0;padding:12px}
+.send{border-radius:16px;padding:12px 20px}
+.status{max-width:860px;margin:0 auto 9px;font-size:12.5px;color:var(--muted);text-align:center}
+.typing span{display:inline-block;width:7px;height:7px;margin:0 2px;border-radius:50%;background:var(--pink);animation:bl 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s;background:var(--violet)}
+.typing span:nth-child(3){animation-delay:.4s;background:var(--cyan)}
+@keyframes bl{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-5px)}}
+
+/* ===== KEY / LOCK ===== */
+.lock{max-width:560px;margin:8vh auto;text-align:center}
+.keybox{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:clamp(15px,4vw,21px);font-weight:700;letter-spacing:2px;
+  padding:18px;border-radius:18px;background:rgba(0,0,0,.45);border:1px dashed rgba(255,78,205,.5);word-break:break-all}
+.keyring{display:grid;gap:10px}
+.spark{position:relative;overflow:hidden}
+.spark::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.35),transparent 70%);
+  transform:translateX(-120%);animation:shine 2.6s infinite}
+@keyframes shine{60%,100%{transform:translateX(120%)}}
+.plan{background:var(--glass);border:1px solid var(--line);border-radius:22px;padding:20px;text-align:center}
+.plan.plus{border-color:rgba(139,92,255,.5)}
+.plan.ultra{border-color:rgba(255,211,110,.55);background:linear-gradient(160deg,rgba(255,211,110,.10),var(--glass))}
+.price{font-size:26px;font-weight:900;margin:8px 0}
+.plan ul{list-style:none;padding:0;margin:12px 0;color:var(--muted);font-size:14px;line-height:2}
+.grid3{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(215px,1fr))}
+.bottom{display:none}
+
+@media(max-width:860px){
+  .side{position:fixed;inset:0 auto 0 0;z-index:60;transform:translateX(-102%);transition:.28s}
+  .side.open{transform:none}
+  .overlay{display:block;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:55;opacity:0;pointer-events:none;transition:.28s}
+  .overlay.show{opacity:1;pointer-events:auto}
+  .menu{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:rgba(255,255,255,.08);border:1px solid var(--line)}
+  .bottom{display:grid;grid-template-columns:repeat(5,1fr);position:sticky;bottom:0;z-index:30;
+    background:rgba(8,8,20,.92);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:7px 4px}
+  .bottom button{font-size:10.5px;color:var(--muted);display:grid;gap:3px;padding:7px 2px;border-radius:12px}
+  .bottom button.active{color:#fff;background:rgba(255,78,205,.16)}
+  .bottom span{font-size:18px}
+  .bubble{max-width:92%}
+  .composer{padding:10px 12px 12px}
+}
+table{width:100%;border-collapse:collapse}
+body.gold{--pink:#ffd36e;--violet:#ff9f43;--cyan:#ffe9a8;--grad:linear-gradient(135deg,#ffd36e,#ff9f43 50%,#ffe9a8)}
+body.gold .bubble.me{color:#241a00}
+.chips{max-width:860px;margin:0 auto 8px;display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:flex;align-items:center;gap:7px;background:var(--glass2);border:1px solid var(--line);border-radius:12px;padding:6px 10px;font-size:12px}
+.chip img{width:34px;height:34px;object-fit:cover;border-radius:8px}
+.chip button{color:var(--danger);font-weight:800}
+.bubble .att{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.bubble .att img{width:120px;border-radius:12px;border:1px solid rgba(0,0,0,.2)}
+.msgrow{display:flex;gap:10px;align-items:flex-end;max-width:100%;animation:pop .25s ease}
+.msgrow.me{flex-direction:row-reverse}
+.avatar{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:15px;
+  background:var(--glass2);border:1px solid var(--line);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.msgrow.me .avatar{background:var(--grad)}
+.msgcol{display:flex;flex-direction:column;gap:4px;min-width:0;max-width:82%}
+.msgcol.me{align-items:flex-end}
+.msgrow .bubble{animation:none}
+.msgmeta{display:flex;gap:10px;align-items:center;font-size:11px;color:var(--muted);padding:0 4px}
+.msgmeta button{color:var(--muted);font-size:11px;display:inline-flex;gap:4px;align-items:center}
+.msgmeta button:hover{color:#fff}
+.suggest{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px}
+.suggest button{background:var(--glass2);border:1px solid var(--line);border-radius:14px;padding:9px 14px;font-size:13px;color:var(--text);transition:.18s}
+.suggest button:hover{border-color:rgba(255,78,205,.5);background:rgba(255,78,205,.1);transform:translateY(-1px)}
+.scrollbtn{position:sticky;float:right;bottom:14px;right:14px;width:38px;height:38px;border-radius:50%;
+  background:var(--glass);border:1px solid var(--line);display:none;place-items:center;font-size:15px;
+  backdrop-filter:blur(12px);box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:15}
+.scrollbtn.show{display:grid}
+.composerRow:focus-within{border-color:var(--violet);box-shadow:0 0 0 4px rgba(139,92,255,.16)}
+.preview{width:100%;height:420px;border:1px solid var(--line);border-radius:18px;background:#fff}
+.artbox{display:grid;place-items:center;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:18px;padding:14px;min-height:260px}
+.artbox svg{max-width:100%;height:auto}
+.gal{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.gal .artbox{min-height:150px;padding:8px;cursor:pointer}
+.conn{display:flex;gap:12px;align-items:center;padding:14px;border-radius:16px;background:var(--glass2);border:1px solid var(--line);margin-top:10px}
+.conn .ico{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:21px;background:rgba(255,255,255,.08);flex:none}
+.conn .info{flex:1;min-width:0}.conn .info span{display:block;font-size:12px;color:var(--muted)}
+.lvl{font-size:11px;padding:3px 9px;border-radius:999px;background:rgba(255,211,110,.16);border:1px solid rgba(255,211,110,.45);color:var(--gold);font-weight:700}
+.scrollx{overflow-x:auto}
+
+/* ===== AUTH V13.2 ===== */
+.auth-card h3{font-family:Outfit,Inter,sans-serif;margin:2px 0 8px;font-size:21px}
+.auth-card code{background:rgba(255,255,255,.09);padding:1px 6px;border-radius:6px;font-size:12px}
+.authrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;flex-wrap:wrap}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none}
+.chk input{accent-color:var(--violet);width:17px;height:17px;margin:0;flex:none}
+.linkbtn{color:var(--cyan);font-size:13px;font-weight:600;padding:4px 2px;text-decoration:underline;text-underline-offset:3px;border-radius:6px}
+.linkbtn:hover{color:#fff}
+.caps{color:var(--gold);font-size:12px;margin-top:6px}
+.field.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:1.5px;text-transform:uppercase}
+.msg.good{color:#3bffa0}
+.pwwrap.hidden{display:none!important}
+.recov{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;padding:18px;
+  background:rgba(3,4,10,.85);backdrop-filter:blur(12px);overflow:auto}
+.reccode{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:clamp(18px,5.2vw,24px);font-weight:700;
+  letter-spacing:2px;text-align:center;padding:18px 12px;border-radius:14px;border:1px dashed rgba(255,211,110,.65);
+  background:rgba(255,211,110,.07);color:var(--gold);user-select:all;word-break:break-all}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth" class="auth">
+  <div class="auth-card">
+    <span class="crown">👑</span>
+    <div class="logo">IA Princesse <span class="gr">V13.2</span></div>
+    <div class="sub">Propulsée par Openi.ia · moteur IA réel</div>
+
+    <!-- vue : connexion / inscription -->
+    <div id="viewMain">
+      <div class="tabs" role="tablist">
+        <button id="loginTab" class="active" type="button" role="tab">Connexion</button>
+        <button id="signupTab" type="button" role="tab">Créer un compte</button>
+      </div>
+      <form id="authForm" novalidate>
+        <div id="pseudoWrap" class="hidden"><input id="pseudo" class="field" maxlength="24" placeholder="Ton pseudo" autocomplete="nickname"></div>
+        <input id="email" class="field" type="email" inputmode="email" placeholder="Ton email" autocomplete="email" autocapitalize="off" spellcheck="false">
+        <div class="pwwrap">
+          <input id="password" class="field" type="password" placeholder="Mot de passe" autocomplete="current-password">
+          <button type="button" class="pwtoggle" data-target="password" aria-label="Afficher le mot de passe">👁️</button>
+        </div>
+        <div id="capsHint" class="caps hidden">⇪ Verrouillage majuscules activé</div>
+        <div id="pwHint" class="small hidden" style="margin-top:6px"></div>
+        <div id="pw2Wrap" class="pwwrap hidden">
+          <input id="password2" class="field" type="password" placeholder="Confirme le mot de passe" autocomplete="new-password">
+          <button type="button" class="pwtoggle" data-target="password2" aria-label="Afficher le mot de passe">👁️</button>
+        </div>
+        <div class="authrow">
+          <label class="chk"><input type="checkbox" id="remember" checked> Rester connecté</label>
+          <button id="forgotBtn" type="button" class="linkbtn">Mot de passe oublié ?</button>
+        </div>
+        <button id="authBtn" class="mainbtn full" type="submit">Se connecter</button>
+      </form>
+    </div>
+
+    <!-- vue : mot de passe oublié (avec code de récupération) -->
+    <div id="viewForgot" class="hidden">
+      <h3>Mot de passe oublié</h3>
+      <p class="small" style="line-height:1.6;margin:0 0 4px">Entre ton email et ton <b>code de récupération</b> (affiché à la création du compte, format <code>PRIN-XXXX-XXXX-XXXX</code>), puis choisis un nouveau mot de passe.</p>
+      <form id="forgotForm" novalidate>
+        <input id="fEmail" class="field" type="email" inputmode="email" placeholder="Ton email" autocomplete="email" autocapitalize="off" spellcheck="false">
+        <input id="fCode" class="field mono" placeholder="PRIN-XXXX-XXXX-XXXX" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <div class="pwwrap">
+          <input id="fpw" class="field" type="password" placeholder="Nouveau mot de passe" autocomplete="new-password">
+          <button type="button" class="pwtoggle" data-target="fpw" aria-label="Afficher le mot de passe">👁️</button>
+        </div>
+        <div id="fpwHint" class="small hidden" style="margin-top:6px"></div>
+        <div class="pwwrap">
+          <input id="fpw2" class="field" type="password" placeholder="Confirme le nouveau mot de passe" autocomplete="new-password">
+          <button type="button" class="pwtoggle" data-target="fpw2" aria-label="Afficher le mot de passe">👁️</button>
+        </div>
+        <button id="forgotGo" class="mainbtn full" type="submit">🔒 Changer mon mot de passe</button>
+      </form>
+      <div class="authrow" style="justify-content:space-between">
+        <button id="forgotCancel" type="button" class="linkbtn">← Retour à la connexion</button>
+        <button id="noCodeBtn" type="button" class="linkbtn">Je n'ai pas mon code</button>
+      </div>
+    </div>
+
+    <!-- vue : pas de code -->
+    <div id="viewNoCode" class="hidden">
+      <h3>Pas de code de récupération ?</h3>
+      <p class="small" style="line-height:1.65;margin:0 0 6px">Ton compte est stocké <b>uniquement sur cet appareil</b> et aucun email ne peut être envoyé : sans le code, impossible de prouver que le compte est à toi.</p>
+      <p class="small" style="line-height:1.65;margin:0 0 6px">Solution de secours : <b>supprimer ce compte</b> (ses discussions et créations sur cet appareil sont effacées), puis le recréer avec le même email.</p>
+      <form id="delForm" novalidate>
+        <input id="dEmail" class="field" type="email" inputmode="email" placeholder="Email du compte à supprimer" autocomplete="email" autocapitalize="off" spellcheck="false">
+        <input id="dConf" class="field" placeholder="Tape SUPPRIMER pour confirmer" autocomplete="off" autocapitalize="characters">
+        <button class="mainbtn dangerbtn full" type="submit">🗑️ Supprimer le compte et recommencer</button>
+      </form>
+      <div class="authrow"><button id="noCodeBack" type="button" class="linkbtn">← Retour</button></div>
+    </div>
+
+    <div id="authMsg" class="msg" role="alert" aria-live="polite"></div>
+    <div class="small" style="text-align:center;margin-top:10px">🔐 Ton compte reste sur cet appareil. Aucun serveur nécessaire.</div>
+  </div>
+</div>
+
+<!-- CODE DE RÉCUPÉRATION (plein écran, utilisé à l'inscription, après un reset et dans ⚙️ Paramètres) -->
+<div id="recov" class="recov hidden" role="dialog" aria-modal="true" aria-labelledby="recTitle">
+  <div class="auth-card">
+    <div style="font-size:40px;text-align:center">🛟</div>
+    <h3 id="recTitle" style="text-align:center;margin:6px 0">Ton code de récupération</h3>
+    <p id="recIntro" class="small" style="line-height:1.6;text-align:center;margin:0 0 14px">Si tu oublies ton mot de passe, ce code est la seule façon de retrouver ton compte. Note-le ou télécharge-le, et garde-le en lieu sûr.</p>
+    <div id="recCode" class="reccode"></div>
+    <div class="row" style="justify-content:center;margin-top:12px">
+      <button id="recCopy" class="ghost" type="button">📋 Copier</button>
+      <button id="recDl" class="ghost" type="button">⬇️ Télécharger</button>
+    </div>
+    <label class="chk" style="margin-top:16px"><input type="checkbox" id="recAck"> J'ai sauvegardé mon code</label>
+    <button id="recGo" class="mainbtn full" type="button" disabled>Continuer</button>
+    <button id="recLater" class="linkbtn hidden" type="button" style="display:block;margin:12px auto 0">Plus tard</button>
+    <div id="recMsg" class="msg"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="app hidden">
+  <aside id="side" class="side">
+    <div class="brand"><span>👑 <span class="gr">Openi.ia</span></span><button id="sideClose" class="ghost" style="padding:4px 10px">✕</button></div>
+    <button class="nav" data-page="chat">💬 Discussion</button>
+    <button class="nav" data-page="code">⌘ Princesse IA Code</button>
+    <button class="nav" data-page="roblox">🎮 Roblox Studio IA</button>
+    <button class="nav" data-page="openia">🔑 Openi.ia <span class="dot" id="keyDot">●</span></button>
+    <button class="nav" data-page="history">🕘 Conversations</button>
+    <button class="nav" data-page="images">🎨 Créer une image</button>
+    <button class="nav" data-page="videos">🎬 Créer une vidéo</button>
+    <button class="nav" data-page="sites">🌐 Créer un site</button>
+    <button class="nav" data-page="games">🕹️ Créer un jeu</button>
+    <button class="nav" data-page="connect">🔗 Connexions</button>
+    <button class="nav" data-page="plans">✨ Abonnement</button>
+    <button class="nav" data-page="claude">🗝️ Mode Claude</button>
+    <button class="nav" data-page="settings">⚙️ Paramètres</button>
+    <button id="logout" class="nav logout" type="button">🚪 Déconnexion</button>
+  </aside>
+  <div id="overlay" class="overlay"></div>
+  <main class="content"><div id="page" style="flex:1;display:flex;flex-direction:column;min-height:0"></div>
+    <nav id="bottom" class="bottom">
+      <button data-page="chat"><span>💬</span>Chat</button>
+      <button data-page="code"><span>⌘</span>Code</button>
+      <button data-page="roblox"><span>🎮</span>Roblox</button>
+      <button data-page="images"><span>🎨</span>Images</button>
+      <button data-page="settings"><span>⚙️</span>Plus</button>
+    </nav>
+  </main>
+</div>
+
+<script type="text/plain" id="tpl-roblox">--[[  IA PRINCESSE - Plugin Roblox Studio  (Openi.ia · forfait Ultra)
+      1. Studio > Game Settings > Security > Allow HTTP Requests : ON
+      2. Enregistre ce fichier dans le dossier Plugins de Studio
+      3. Au 1er clic, Studio demande l'autorisation d'acces a localhost : Accepte
+         (cette autorisation est limitee a ce serveur local, rien d'autre
+         n'est partage avec Openi.ia)
+      4. Une fois active, le plugin affiche En ligne / Hors ligne et
+         construit automatiquement dans la place ouverte ce que tu demandes
+         a l'IA depuis le site (onglet Roblox > Construire en direct).
+--]]
+local HttpService = game:GetService("HttpService")
+local BASE = "http://localhost:8787"          -- serveur local Openi.ia
+local CLE = ""                                -- colle ici ta cle OPENI-...
+
+local toolbar = plugin:CreateToolbar("IA Princesse")
+local bouton = toolbar:CreateButton("IA Princesse", "Ouvrir IA Princesse", "rbxassetid://4458901886")
+
+local info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Right, false, false, 320, 460, 280, 340)
+local gui = plugin:CreateDockWidgetPluginGui("IAPrincesse", info)
+gui.Title = "Roblox IA Sonnet 2.0"
+
+local fond = Instance.new("Frame", gui)
+fond.Size = UDim2.fromScale(1, 1)
+fond.BackgroundColor3 = Color3.fromRGB(12, 12, 24)
+
+local statut = Instance.new("TextLabel", fond)
+statut.Size = UDim2.new(1, -20, 0, 24)
+statut.Position = UDim2.new(0, 10, 0, 8)
+statut.BackgroundTransparency = 1
+statut.TextXAlignment = Enum.TextXAlignment.Left
+statut.Font = Enum.Font.SourceSansBold
+statut.TextColor3 = Color3.fromRGB(255, 95, 122)
+statut.Text = "🔴 Hors ligne"
+
+local boite = Instance.new("TextBox", fond)
+boite.Size = UDim2.new(1, -20, 0, 80)
+boite.Position = UDim2.new(0, 10, 0, 36)
+boite.MultiLine = true
+boite.ClearTextOnFocus = false
+boite.PlaceholderText = "Ex : un script qui fait sauter le joueur 2x plus haut"
+boite.TextColor3 = Color3.new(1, 1, 1)
+boite.BackgroundColor3 = Color3.fromRGB(26, 26, 48)
+boite.TextWrapped = true
+boite.TextXAlignment = Enum.TextXAlignment.Left
+
+local envoyer = Instance.new("TextButton", fond)
+envoyer.Size = UDim2.new(1, -20, 0, 34)
+envoyer.Position = UDim2.new(0, 10, 0, 122)
+envoyer.Text = "Generer un script"
+envoyer.TextColor3 = Color3.new(0, 0, 0)
+envoyer.BackgroundColor3 = Color3.fromRGB(255, 120, 210)
+
+local sortie = Instance.new("TextLabel", fond)
+sortie.Size = UDim2.new(1, -20, 1, -166)
+sortie.Position = UDim2.new(0, 10, 0, 162)
+sortie.BackgroundColor3 = Color3.fromRGB(20, 20, 38)
+sortie.TextColor3 = Color3.fromRGB(200, 200, 230)
+sortie.TextWrapped = true
+sortie.TextXAlignment = Enum.TextXAlignment.Left
+sortie.TextYAlignment = Enum.TextYAlignment.Top
+sortie.Text = "Pret. En attente du site (onglet Roblox > Construire en direct)..."
+
+bouton.Click:Connect(function()
+	gui.Enabled = not gui.Enabled
+end)
+
+local function enLigne(ok)
+	if ok then
+		statut.TextColor3 = Color3.fromRGB(80, 230, 160)
+		statut.Text = "🟢 En ligne"
+	else
+		statut.TextColor3 = Color3.fromRGB(255, 95, 122)
+		statut.Text = "🔴 Hors ligne"
+	end
+end
+
+-- Génération manuelle d'un script (inchangé, juste rebranché sur BASE)
+envoyer.MouseButton1Click:Connect(function()
+	local demande = boite.Text
+	if demande == "" then return end
+	sortie.Text = "L'IA reflechit..."
+	local ok, rep = pcall(function()
+		return HttpService:RequestAsync({
+			Url = BASE .. "/api/roblox-ai",
+			Method = "POST",
+			Headers = { ["Content-Type"] = "application/json", ["x-openi-key"] = CLE },
+			Body = HttpService:JSONEncode({ prompt = demande })
+		})
+	end)
+	if not ok then
+		sortie.Text = "Erreur : " .. tostring(rep) .. "\nVerifie que le serveur tourne et que HTTP est autorise."
+		enLigne(false)
+		return
+	end
+	enLigne(true)
+	if rep.StatusCode ~= 200 then
+		sortie.Text = "Serveur : " .. rep.StatusCode .. " " .. tostring(rep.Body)
+		return
+	end
+	local data = HttpService:JSONDecode(rep.Body)
+	local code = data.text or ""
+	local script = Instance.new("Script")
+	script.Name = "IA_Princesse_Script"
+	script.Source = code
+	script.Parent = game:GetService("ServerScriptService")
+	sortie.Text = "Script cree dans ServerScriptService.\n\n" .. string.sub(code, 1, 400)
+end)
+
+-- Construit dans Workspace la liste d'objets renvoyée par le site (ex : "un arbre")
+local function construire(id, objets)
+	local model = Instance.new("Model")
+	model.Name = "IA_Construction_" .. tostring(id)
+	model.Parent = workspace
+
+	local formes = {
+		Part = Enum.PartType.Block,
+		Ball = Enum.PartType.Ball,
+		Cylinder = Enum.PartType.Cylinder,
+	}
+
+	local total = 0
+	for _, o in ipairs(objets) do
+		local okObj = pcall(function()
+			local part = Instance.new("Part")
+			part.Shape = formes[o.shape] or Enum.PartType.Block
+			part.Size = Vector3.new(o.size[1] or 2, o.size[2] or 2, o.size[3] or 2)
+			part.CFrame = CFrame.new(o.position[1] or 0, o.position[2] or 0, o.position[3] or 0)
+			part.Color = Color3.fromRGB(o.color and o.color[1] or 150, o.color and o.color[2] or 150, o.color and o.color[3] or 150)
+			part.Anchored = true
+			part.Name = o.name or "Objet"
+			if o.material then
+				pcall(function() part.Material = Enum.Material[o.material] end)
+			end
+			part.Parent = model
+		end)
+		if okObj then total = total + 1 end
+	end
+
+	sortie.Text = "🌳 Construction reçue du site : " .. total .. " objet(s) placés dans Workspace > " .. model.Name
+end
+
+-- Boucle de fond : signale que le plugin est actif ET va chercher les
+-- constructions demandées depuis le site (accès limité : lecture/écriture
+-- uniquement sur ce serveur local, aucune autre donnée du compte transmise)
+task.spawn(function()
+	while gui and gui.Enabled ~= nil do
+		local ok, rep = pcall(function()
+			return HttpService:RequestAsync({
+				Url = BASE .. "/api/roblox/poll",
+				Method = "GET",
+				Headers = { ["x-openi-key"] = CLE },
+			})
+		end)
+		if ok and rep.StatusCode == 200 then
+			enLigne(true)
+			local okData, data = pcall(HttpService.JSONDecode, HttpService, rep.Body)
+			if okData and data.builds then
+				for _, build in ipairs(data.builds) do
+					construire(build.id, build.objects or {})
+				end
+			end
+		else
+			enLigne(false)
+		end
+		task.wait(3)
+	end
+end)
+</script>
+<script type="text/plain" id="tpl-server">/*  Openi.ia - serveur local (Google + Roblox Studio)
+    1) npm init -y && npm i express cors node-fetch@2 googleapis
+    2) mets tes cles dans les variables ci-dessous
+    3) node openi_server.js   -> http://localhost:8787
+*/
+const express = require('express');
+const cors = require('cors');
+const fetch = require('node-fetch');
+const { google } = require('googleapis');
+
+const PORT = 8787;
+const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY || 'sk-ant-...'; // IA générale
+const ROBLOX_ANTHROPIC_KEY = process.env.ROBLOX_ANTHROPIC_API_KEY || ANTHROPIC_KEY; // IA Roblox séparée possible
+const ROBLOX_MODEL = process.env.ROBLOX_AI_MODEL || 'claude-sonnet-4-6'; // nom affiché : Sonnet 2.0
+const GOOGLE_ID     = process.env.GOOGLE_CLIENT_ID || '....apps.googleusercontent.com';
+const GOOGLE_SECRET = process.env.GOOGLE_CLIENT_SECRET || '...';
+const REDIRECT      = `http://localhost:${PORT}/auth/google/callback`;
+
+const app = express();
+app.use(cors());
+app.use(express.json({ limit: '10mb' }));
+
+let googleTokens = null; // en vrai : range ca par utilisateur dans une base
+
+const oauth = () => new google.auth.OAuth2(GOOGLE_ID, GOOGLE_SECRET, REDIRECT);
+
+// ---- Google : demander l'autorisation ----
+app.get('/auth/google', (req, res) => {
+  const url = oauth().generateAuthUrl({
+    access_type: 'offline',
+    prompt: 'consent',
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/gmail.readonly',
+      'https://www.googleapis.com/auth/drive.readonly',
+      'https://www.googleapis.com/auth/calendar.readonly'
+    ]
+  });
+  res.redirect(url);
+});
+
+app.get('/auth/google/callback', async (req, res) => {
+  const client = oauth();
+  const { tokens } = await client.getToken(req.query.code);
+  googleTokens = tokens;
+  res.send('<h2>Google connecte a Openi.ia. Tu peux fermer cette fenetre.</h2>');
+});
+
+app.get('/api/google/status', (req, res) => res.json({ connected: !!googleTokens }));
+
+app.get('/api/google/mails', async (req, res) => {
+  if (!googleTokens) return res.status(401).json({ error: 'non connecte' });
+  const client = oauth(); client.setCredentials(googleTokens);
+  const gmail = google.gmail({ version: 'v1', auth: client });
+  const list = await gmail.users.messages.list({ userId: 'me', maxResults: 10 });
+  const msgs = [];
+  for (const m of list.data.messages || []) {
+    const d = await gmail.users.messages.get({ userId: 'me', id: m.id, format: 'metadata' });
+    const h = Object.fromEntries((d.data.payload.headers || []).map(x => [x.name, x.value]));
+    msgs.push({ de: h.From, sujet: h.Subject, date: h.Date, apercu: d.data.snippet });
+  }
+  res.json({ mails: msgs });
+});
+
+// ---- IA (utilise par le site ET par le plugin Roblox Studio) ----
+app.post('/api/ia', async (req, res) => {
+  const { prompt, mode, history } = req.body || {};
+  const systeme = mode === 'roblox-lua'
+    ? "Tu es IA Princesse, creee par Tissou. Ecris UNIQUEMENT du code Lua pour Roblox Studio, sans explication ni balises markdown."
+    : "Tu es IA Princesse, une assistante creee par Tissou. Reponds en francais.";
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': ANTHROPIC_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2000,
+        system: systeme,
+        messages: [...(history || []), { role: 'user', content: prompt }]
+      })
+    });
+    const d = await r.json();
+    res.json({ text: (d.content || []).map(c => c.text || '').join('\n') });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
+/* =========================================================
+   ROBLOX IA — SONNET 2.0
+   Endpoint totalement séparé de /api/ia.
+   Utilise une clé et un modèle configurables séparément.
+   ========================================================= */
+// Les variables ROBLOX_ANTHROPIC_KEY / ROBLOX_MODEL sont définies plus haut.
+
+app.post('/api/roblox-ai', async (req, res) => {
+  const { prompt, history } = req.body || {};
+  if (!prompt || !String(prompt).trim()) {
+    return res.status(400).json({ error: 'Prompt Roblox manquant.' });
+  }
+
+  const systeme = `Tu es Roblox IA Sonnet 2.0, une IA spécialisée UNIQUEMENT
+dans Roblox Studio et Luau. Tu es indépendante de l'IA générale Openi.ia.
+
+RÈGLES :
+- Génère du Luau prêt à utiliser dans Roblox Studio.
+- Précise l'emplacement du script si nécessaire (ServerScriptService,
+  StarterPlayerScripts, StarterGui, ReplicatedStorage, etc.).
+- Respecte les services, RemoteEvents, RemoteFunctions et APIs Roblox.
+- Pour une demande de correction, renvoie le code corrigé.
+- Pour une demande d'explication, explique clairement puis donne le code
+  si cela est utile.
+- N'affirme jamais avoir exécuté ou testé le script.
+- Évite les balises markdown quand la demande est explicitement "code seul".
+- Ne réponds pas aux demandes sans rapport avec Roblox Studio.`;
+
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': ROBLOX_ANTHROPIC_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: ROBLOX_MODEL,
+        max_tokens: 5000,
+        system: systeme,
+        messages: [...(history || []), { role: 'user', content: String(prompt) }]
+      })
+    });
+
+    const d = await r.json();
+    if (!r.ok) {
+      return res.status(r.status).json({
+        error: d?.error?.message || 'Erreur de Roblox IA.'
+      });
+    }
+
+    res.json({
+      text: (d.content || []).map(c => c.text || '').join('\n'),
+      model: ROBLOX_MODEL
+    });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
+/* =========================================================
+   ROBLOX — connexion en direct (forfait Ultra)
+   Le site web envoie une demande ("un arbre"), le serveur
+   demande à l'IA une liste d'objets simples, et le plugin
+   Roblox Studio va chercher cette liste (polling) pour la
+   construire directement dans la place ouverte.
+   ========================================================= */
+let robloxLastPing = 0;      // dernier signal reçu du plugin Studio
+let robloxQueue = [];        // constructions en attente à envoyer au plugin
+
+app.post('/api/roblox/heartbeat', (req, res) => {
+  robloxLastPing = Date.now();
+  res.json({ ok: true });
+});
+
+app.get('/api/roblox/status', (req, res) => {
+  res.json({ online: (Date.now() - robloxLastPing) < 8000 });
+});
+
+app.get('/api/roblox/poll', (req, res) => {
+  robloxLastPing = Date.now(); // le plugin qui vient chercher = plugin en ligne
+  const batch = robloxQueue;
+  robloxQueue = [];
+  res.json({ builds: batch });
+});
+
+app.post('/api/roblox/build', async (req, res) => {
+  const { prompt } = req.body || {};
+  if (!prompt || !String(prompt).trim()) {
+    return res.status(400).json({ error: 'Décris ce qu\'il faut construire.' });
+  }
+  const systeme = `Tu transformes une demande en une petite scène 3D pour Roblox Studio.
+Réponds UNIQUEMENT avec un JSON valide, sans aucun texte autour ni balises markdown, au format exact :
+{"objects":[{"shape":"Part","size":[4,1,4],"position":[0,0.5,0],"color":[120,72,40],"material":"Wood","name":"Tronc"}]}
+Règles :
+- "shape" vaut "Part" (bloc), "Ball" (sphère) ou "Cylinder".
+- "size" et "position" sont des nombres en studs, "position" est le centre de l'objet.
+- "color" est du RGB 0-255.
+- "material" est un nom d'Enum.Material Roblox (Wood, Grass, Plastic, Slate, ...), optionnel.
+- Maximum 40 objets.
+- Pose la scène au sol autour de (0, y, 0), avec Y adapté à la demi-hauteur de chaque objet.`;
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': ROBLOX_ANTHROPIC_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: ROBLOX_MODEL,
+        max_tokens: 2000,
+        system: systeme,
+        messages: [{ role: 'user', content: String(prompt) }]
+      })
+    });
+    const d = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: d?.error?.message || 'Erreur IA.' });
+    const raw = (d.content || []).map(c => c.text || '').join('\n').trim();
+    const cleaned = raw.replace(/^```json\s*|```$/g, '').trim();
+    let parsed;
+    try { parsed = JSON.parse(cleaned); } catch { parsed = { objects: [] }; }
+    const objects = Array.isArray(parsed.objects) ? parsed.objects.slice(0, 40) : [];
+    if (!objects.length) return res.status(422).json({ error: 'L\'IA n\'a pas réussi à décrire cette construction, réessaie avec une phrase plus simple.' });
+    const id = Date.now();
+    robloxQueue.push({ id, objects });
+    res.json({ ok: true, id, count: objects.length, online: (Date.now() - robloxLastPing) < 8000 });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
+app.listen(PORT, () => console.log('Openi.ia sur http://localhost:' + PORT));
+</script>
+<script>
+const PRISTINE=(()=>{try{const c=document.documentElement.cloneNode(true);c.querySelectorAll('iframe,[id*="puter"],[class*="puter"]').forEach(n=>n.remove());return '<!doctype html>\n'+c.outerHTML}catch(e){return null}})();
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,9);
+const LS=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
+const SET=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
+
+const USERS='ia_princesse_v84_users', SESSION='openi_user_session', DB='ia_princesse_local', KEYS='openi_keys_v95';
+let store=LS(DB,{conversations:[],sites:[],arts:[],games:[],videos:[]});
+if(!store.conversations)store={conversations:[],sites:[],arts:[],games:[],videos:[]};
+store.arts=store.arts||[];store.sites=store.sites||[];store.games=store.games||[];store.claudeMsgs=store.claudeMsgs||[];store.videos=store.videos||[];
+const save=()=>SET(DB,store);
+let me=null,currentPage='chat',currentConv=null,signup=false,sampleFn=undefined,busy=false,ctl=null,currentArt=null,currentGame=null,currentSite=null,currentVideo=null,videoTimer=null,artMode='svg';
+const key=()=>me?.id||'anon';
+const myConvs=()=>store.conversations.filter(x=>x.userId===key()).sort((a,b)=>b.updated-a.updated);
+
+/* ---------- moteur IA gratuit intégré (Puter.js, aucune clé requise) ---------- */
+function noEngineMsg(){
+  return location.protocol==='file:'
+    ? 'Moteur gratuit indisponible en ouvrant le fichier en double-clic (protocole non supporté). Héberge le fichier sur un vrai site (même gratuit), ou ajoute ta clé perso dans ⚙️ Paramètres.'
+    : 'Moteur indisponible, vérifie ta connexion internet.';
+}
+let puterReady=null;
+function loadPuter(){
+  if(location.protocol==='file:')return Promise.reject(new Error('unsupported_protocol'));
+  if(window.puter)return Promise.resolve(window.puter);
+  if(puterReady)return puterReady;
+  puterReady=new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.src='https://js.puter.com/v2/';
+    s.onload=()=>resolve(window.puter||null);
+    s.onerror=()=>reject(new Error('Moteur gratuit indisponible (connexion bloquée).'));
+    document.head.appendChild(s);
+  });
+  return puterReady;
+}
+function puterText(r){
+  const c=r?.message?.content;
+  if(typeof c==='string')return c;
+  if(Array.isArray(c))return c.map(x=>x?.text||'').join('');
+  return typeof r==='string'?r:'';
+}
+function makePuterEngine(p){
+  return async function(messages,opts={}){
+    const normalizedMessages=Array.isArray(messages)
+      ? messages.filter(Boolean).map(m=>({role:m.role||'user',content:typeof m.content==='string'?m.content:String(m.content??'')}))
+      : [{role:'user',content:String(messages??'')}];
+    if(!normalizedMessages.length) normalizedMessages.push({role:'user',content:''});
+    try{
+      const stream=await p.ai.chat(normalizedMessages,false,{stream:true});
+      let full='';
+      for await(const part of stream){
+        if(opts.signal?.aborted)throw Object.assign(new Error('cancelled'),{code:'cancelled'});
+        const chunk=part?.text ?? part?.choices?.[0]?.delta?.content ?? '';
+        if(chunk){full+=chunk;opts.onText?.({text:full})}
+      }
+      if(!full)throw new Error('vide');
+      return {text:full};
+    }catch(e){
+      if(e?.code==='cancelled')throw e;
+      const r=await p.ai.chat(normalizedMessages,false,{});
+      const text=puterText(r);
+      if(!text)throw new Error('Le moteur gratuit n\'a renvoyé aucun texte, réessaie.');
+      opts.onText?.({text});return {text};
+    }
+  };
+}
+/* ---------- moteur IA à clé perso (avancé, optionnel) ---------- */
+function makeKeyEngine(cfg){
+  return async function(messages,opts={}){
+    const normalizedMessages=Array.isArray(messages)
+      ? messages.filter(Boolean).map(m=>({role:m.role||'user',content:typeof m.content==='string'?m.content:String(m.content??'')}))
+      : [{role:'user',content:String(messages??'')}];
+    if(!normalizedMessages.length) normalizedMessages.push({role:'user',content:''});
+    const provider=cfg.provider||'openrouter';
+
+    // Gemini natif : Google AI Studio -> x-goog-api-key + generateContent.
+    if(provider==='gemini'){
+      const gemModel='gemini-flash-latest';
+      const system=normalizedMessages.filter(m=>m.role==='system').map(m=>m.content).join('\n');
+      const contents=normalizedMessages.filter(m=>m.role!=='system' && m.content.trim()).map(m=>({
+        role:m.role==='assistant'?'model':'user',
+        parts:[{text:m.content}]
+      }));
+      if(!contents.length) contents.push({role:'user',parts:[{text:'Bonjour'}]});
+      const body={contents};
+      if(system) body.systemInstruction={parts:[{text:system}]};
+      const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${gemModel}:generateContent`,{
+        method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':cfg.key},body:JSON.stringify(body),signal:opts.signal
+      });
+      let d={};try{d=await r.json()}catch{}
+      if(!r.ok) throw new Error(d?.error?.message||`Gemini ${r.status}`);
+      const text=d?.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'';
+      if(!text) throw new Error('Gemini n\'a renvoyé aucun texte. Vérifie la clé AI Studio et ses restrictions.');
+      opts.onText?.({text});return {text};
+    }
+
+    let url,model,headers={'Content-Type':'application/json','Authorization':'Bearer '+cfg.key};
+    if(provider==='openrouter'){
+      // plusieurs modèles gratuits en secours : si l'un est saturé, payant, retiré ou renommé, on essaie le suivant automatiquement
+      const orModels=['meta-llama/llama-3.1-8b-instruct:free','google/gemini-2.0-flash-exp:free','qwen/qwen-2.5-72b-instruct:free','mistralai/mistral-7b-instruct:free','deepseek/deepseek-chat:free','meta-llama/llama-3.3-70b-instruct:free','openrouter/free'];
+      const orHeaders={'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'HTTP-Referer':location.href,'X-Title':'IA Princesse'};
+      let lastMsg='';
+      for(const m of orModels){
+        let r;
+        try{ r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:orHeaders,
+          body:JSON.stringify({model:m,messages:normalizedMessages,temperature:0.7}),signal:opts.signal}); }
+        catch(e){ if(opts.signal?.aborted)throw e; lastMsg=e.message||'Erreur réseau'; continue }
+        let d={};try{d=await r.json()}catch{}
+        if(r.ok){
+          const text=d?.choices?.[0]?.message?.content||'';
+          if(text){ opts.onText?.({text}); return {text} }
+          lastMsg='Réponse vide';continue;
+        }
+        lastMsg=d?.error?.message||`API ${r.status}`;
+        // clé invalide/refusée : on arrête tout de suite, ce n'est pas la peine d'essayer les autres modèles
+        if(r.status===401||r.status===403)throw new Error('Clé API refusée. Vérifie qu\'elle est correcte et active dans ⚙️ Paramètres.');
+        continue; // toute autre erreur (saturé, payant, modèle retiré/renommé, etc.) -> on tente le modèle suivant
+      }
+      throw new Error('Les modèles gratuits sont très demandés en ce moment 😮\u200d💨. Réessaie dans une minute, ou ajoute une clé OpenAI, Gemini, Groq ou Mistral dans ⚙️ Paramètres pour un accès plus stable.');
+    } else if(provider==='openai'){
+      url='https://api.openai.com/v1/chat/completions';model='gpt-5.1';
+    } else if(provider==='groq'){
+      url='https://api.groq.com/openai/v1/chat/completions';
+      model='openai/gpt-oss-120b';
+    } else if(provider==='mistral'){
+      url='https://api.mistral.ai/v1/chat/completions';model='mistral-small-latest';
+    } else if(provider==='anthropic'){
+      url='https://api.anthropic.com/v1/messages';model='claude-sonnet-4-6';
+      headers={'Content-Type':'application/json','x-api-key':cfg.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
+      const system=normalizedMessages.filter(m=>m.role==='system').map(m=>m.content).join('\n');
+      const msgs=normalizedMessages.filter(m=>m.role!=='system').map(m=>({role:m.role==='assistant'?'assistant':'user',content:m.content}));
+      const body={model,max_tokens:2048,messages:msgs};if(system)body.system=system;
+      const r=await fetch(url,{method:'POST',headers,body:JSON.stringify(body),signal:opts.signal});
+      let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d?.error?.message||`Anthropic ${r.status}`);
+      const text=d?.content?.map(x=>x.text||'').join('')||'';if(!text)throw new Error('Anthropic n\'a renvoyé aucun texte.');opts.onText?.({text});return {text};
+    } else throw new Error('Fournisseur IA inconnu.');
+
+    const body={model,messages:normalizedMessages,temperature:0.7};
+    const r=await fetch(url,{method:'POST',headers,body:JSON.stringify(body),signal:opts.signal});
+    let d={};try{d=await r.json()}catch{}
+    if(!r.ok)throw new Error(d?.error?.message||`API ${r.status}`);
+    const text=d?.choices?.[0]?.message?.content||'';
+    if(!text)throw new Error('Le moteur IA n\'a renvoyé aucun texte.');
+    opts.onText?.({text});return {text};
+  };
+}
+function resetEngine(){sampleFn=undefined}
+async function engine(){
+  if(sampleFn!==undefined)return sampleFn;
+  // 1) moteur natif intégré à Claude (gratuit, disponible uniquement quand la page tourne sur claude.ai)
+  try{const s=await window.claude?.use?.('sample');if(s){sampleFn=s;return s}}catch{}
+  // 2) si une clé perso a été ajoutée en avancé dans ⚙️ Paramètres, on la respecte
+  const cfg=LS('princesse_engine_config',{provider:'openrouter',key:''});
+  if(cfg.key){sampleFn=makeKeyEngine(cfg);return sampleFn}
+  // 3) sinon, moteur gratuit intégré à l'application, sans aucune clé à fournir — marche ici et dans le fichier téléchargé
+  try{
+    const p=await loadPuter();
+    if(p?.ai?.chat){sampleFn=makePuterEngine(p);return sampleFn}
+  }catch(e){}
+  sampleFn=null;return null;
+}
+function standaloneMode(){return !window.claude?.use}
+
+/* ---------- clés Openi.ia ---------- */
+const keys=()=>LS(KEYS,[]);
+const activeKeyId=()=>localStorage.getItem('openi_active_'+key())||'';
+function generateKey(){
+  const seg=()=>Array.from({length:4},()=>'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*31)]).join('');
+  const k={id:uid(),value:`OPENI-${seg()}-${seg()}-${seg()}-${seg()}`,userId:key(),created:Date.now()};
+  const all=keys();all.push(k);SET(KEYS,all);return k;
+}
+const keyValid=v=>keys().some(k=>k.value.toUpperCase()===String(v).trim().toUpperCase());
+const unlocked=()=>keyValid(activeKeyId());
+function activate(v){const k=keys().find(k=>k.value.toUpperCase()===String(v).trim().toUpperCase());
+  if(!k)return false;localStorage.setItem('openi_active_'+key(),k.value);return true}
+
+/* ---------- hachage sécurisé du mot de passe (fonctionne même hors ligne / fichier local, sans HTTPS) ---------- */
+function utf8Bin(str){return unescape(encodeURIComponent(str))}
+function sha256Sync(ascii){
+  function rightRotate(value,amount){return (value>>>amount)|(value<<(32-amount))}
+  var mathPow=Math.pow,maxWord=mathPow(2,32),lengthProperty='length',i,j,result='';
+  var words=[],asciiBitLength=ascii[lengthProperty]*8;
+  var hash=sha256Sync.h=sha256Sync.h||[];
+  var k=sha256Sync.k=sha256Sync.k||[];
+  var primeCounter=k[lengthProperty];
+  var isComposite={};
+  for(var candidate=2;primeCounter<64;candidate++){
+    if(!isComposite[candidate]){
+      for(i=0;i<313;i+=candidate)isComposite[i]=candidate;
+      hash[primeCounter]=(mathPow(candidate,.5)*maxWord)|0;
+      k[primeCounter++]=(mathPow(candidate,1/3)*maxWord)|0;
+    }
+  }
+  ascii+='\x80';
+  while(ascii[lengthProperty]%64-56)ascii+='\x00';
+  for(i=0;i<ascii[lengthProperty];i++){
+    j=ascii.charCodeAt(i);
+    if(j>>8)return null;
+    words[i>>2]|=j<<((3-i)%4)*8;
+  }
+  words[words[lengthProperty]]=((asciiBitLength/maxWord)|0);
+  words[words[lengthProperty]]=(asciiBitLength);
+  for(j=0;j<words[lengthProperty];){
+    var w=words.slice(j,j+=16);
+    var oldHash=hash;hash=hash.slice(0,8);
+    for(i=0;i<64;i++){
+      var w15=w[i-15],w2=w[i-2];
+      var a=hash[0],e=hash[4];
+      var temp1=hash[7]
+        +(rightRotate(e,6)^rightRotate(e,11)^rightRotate(e,25))
+        +((e&hash[5])^((~e)&hash[6]))
+        +k[i]
+        +(w[i]=(i<16)?w[i]:(
+            w[i-16]
+            +(rightRotate(w15,7)^rightRotate(w15,18)^(w15>>>3))
+            +w[i-7]
+            +(rightRotate(w2,17)^rightRotate(w2,19)^(w2>>>10))
+          )|0
+        );
+      var temp2=(rightRotate(a,2)^rightRotate(a,13)^rightRotate(a,22))
+        +((a&hash[1])^(a&hash[2])^(hash[1]&hash[2]));
+      hash=[(temp1+temp2)|0].concat(hash);
+      hash[4]=(hash[4]+temp1)|0;
+    }
+    for(i=0;i<8;i++)hash[i]=(hash[i]+oldHash[i])|0;
+  }
+  for(i=0;i<8;i++)for(j=3;j+1;j--){var b=(hash[i]>>(j*8))&255;result+=((b<16)?0:'')+b.toString(16)}
+  return result;
+}
+async function sha256Hex(str){
+  if(window.crypto?.subtle?.digest){
+    try{
+      const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+      return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+    }catch(e){/* pas de contexte sécurisé (ex: fichier ouvert en local) → repli ci-dessous */}
+  }
+  return sha256Sync(utf8Bin(str));
+}
+function randomSalt(len){
+  len=len||16;
+  try{
+    const arr=new Uint8Array(len);
+    (window.crypto||window.msCrypto).getRandomValues(arr);
+    return [...arr].map(x=>x.toString(16).padStart(2,'0')).join('');
+  }catch(e){
+    let s='';for(let i=0;i<len*2;i++)s+=Math.floor(Math.random()*16).toString(16);
+    return s;
+  }
+}
+// dérivation salée + répétée : ralentit une attaque par force brute sur les données stockées localement
+async function hashPw(pw,salt){
+  let h=salt+'::'+pw;
+  for(let i=0;i<1500;i++)h=await sha256Hex(h+'::'+salt+'::'+i%97);
+  return h;
+}
+// vérifie un mot de passe contre un utilisateur, en migrant en douceur les anciens comptes (V13.0 et avant, hash simple non salé)
+async function verifyPw(pw,u){
+  if(u.salt&&u.hashVer>=2){
+    return (await hashPw(pw,u.salt))===u.pass;
+  }
+  // ancien format : SHA-256 simple sans sel — on vérifie puis on migre immédiatement
+  const legacy=await sha256Hex(pw);
+  if(legacy===u.pass){u._needsMigration=true;return true}
+  return false;
+}
+async function setPw(u,pw){
+  u.salt=randomSalt();u.pass=await hashPw(pw,u.salt);u.hashVer=2;
+}
+
+/* =====================================================================
+   COMPTES V13.2 — inscription, connexion, code de récupération, reset
+   (tout reste sur l'appareil : aucun serveur, aucun email envoyé)
+   ===================================================================== */
+const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const COMMON_PW=['12345678','123456789','1234567890','11111111','00000000','12341234','password','password1','passw0rd','azertyui','azerty123','qwertyui','qwerty123','motdepasse','iloveyou','princesse','abcd1234','openi.ia'];
+const LOGIN_LOCK='openi_login_attempts';
+const REC_ALPHA='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 32 caractères, sans I/O/0/1 pour éviter les confusions
+
+function storageOK(){try{const k='__t'+uid();localStorage.setItem(k,'1');localStorage.removeItem(k);return true}catch(e){return false}}
+function setMsg(el,t,good){if(!el)return;el.textContent=t||'';el.classList.toggle('good',!!good)}
+function fmtWait(ms){const s=Math.max(1,Math.ceil(ms/1000));return s>=60?Math.floor(s/60)+' min'+(s%60?' '+(s%60)+' s':''):s+' s'}
+function copyTextSafe(t){
+  return (async()=>{
+    try{await navigator.clipboard.writeText(t);return true}catch(e){}
+    try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;opacity:0;left:-999px';
+      document.body.appendChild(ta);ta.select();const ok=document.execCommand('copy');ta.remove();return ok}catch(e){return false}
+  })();
+}
+
+/* ---------- session (« Rester connecté » = localStorage, sinon sessionStorage) ---------- */
+function sessGet(){
+  for(const st of [localStorage,sessionStorage]){try{const v=JSON.parse(st.getItem(SESSION));if(v)return v}catch(e){}}
+  return null;
+}
+function sessSet(id,remember){
+  sessClear();
+  try{(remember?localStorage:sessionStorage).setItem(SESSION,JSON.stringify(id))}catch(e){}
+}
+function sessClear(){try{localStorage.removeItem(SESSION)}catch(e){}try{sessionStorage.removeItem(SESSION)}catch(e){}}
+
+/* ---------- verrouillage anti force-brute (progressif : 1 min, 2 min, 4 min … max 15 min) ---------- */
+function attemptsFor(k){const all=LS(LOGIN_LOCK,{});return all[k]||{n:0,until:0,lvl:0}}
+function registerFail(k){const all=LS(LOGIN_LOCK,{});const a=all[k]||{n:0,until:0,lvl:0};a.n++;
+  if(a.n>=5){a.lvl=Math.min((a.lvl||0)+1,5);a.until=Date.now()+Math.min(60000*Math.pow(2,a.lvl-1),900000);a.n=0}
+  all[k]=a;SET(LOGIN_LOCK,all)}
+function clearAttempts(k){const all=LS(LOGIN_LOCK,{});delete all[k];SET(LOGIN_LOCK,all)}
+const lockLeft=k=>{const a=attemptsFor(k);return a.until>Date.now()?a.until-Date.now():0};
+
+/* ---------- validation mot de passe ---------- */
+function pwProblem(pw,email){
+  if(!pw||pw.length<8)return 'Le mot de passe doit faire au moins 8 caractères.';
+  if(pw.length>128)return 'Mot de passe trop long (128 caractères maximum).';
+  if(COMMON_PW.includes(pw.toLowerCase()))return 'Ce mot de passe est trop courant, choisis-en un autre.';
+  if(email&&pw.toLowerCase()===String(email).toLowerCase())return 'Le mot de passe ne doit pas être ton email.';
+  return '';
+}
+function pwScore(pw){
+  let s=0;if(pw.length>=8)s++;if(pw.length>=12)s++;
+  if(/[a-z]/.test(pw)&&/[A-Z]/.test(pw))s++;if(/\d/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;
+  return Math.min(s,4);
+}
+function pwMeter(inp,hint){
+  const pw=inp.value;
+  if(!pw){hint.classList.add('hidden');return}
+  hint.classList.remove('hidden');
+  const sc=pwScore(pw),labels=['Très faible','Faible','Correct','Bon','Excellent'],colors=['#ff5f7a','#ff5f7a','#ffd36e','#31e6ff','#3bffa0'];
+  hint.innerHTML=`<div class="pwstrength"><i style="width:${(sc+1)*20}%;background:${colors[sc]}"></i></div>
+    <span style="color:${colors[sc]}">${labels[sc]}</span> — 8 caractères minimum, idéalement majuscule + chiffre + symbole.`;
+}
+
+/* ---------- code de récupération ---------- */
+function newRecCode(){
+  const out=[];
+  try{const a=new Uint8Array(12);(window.crypto||window.msCrypto).getRandomValues(a);for(const b of a)out.push(REC_ALPHA[b&31])}
+  catch(e){for(let i=0;i<12;i++)out.push(REC_ALPHA[Math.floor(Math.random()*32)])}
+  const s=out.join('');return 'PRIN-'+s.slice(0,4)+'-'+s.slice(4,8)+'-'+s.slice(8,12);
+}
+function normRec(s){let n=String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(n.length===16&&n.startsWith('PRIN'))n=n.slice(4);return n}
+async function setRec(u,code){u.recSalt=randomSalt();u.rec=await hashPw(normRec(code),u.recSalt);u.recAt=Date.now()}
+async function verifyRec(u,code){
+  const n=normRec(code);
+  if(!u||!u.rec||!u.recSalt||n.length!==12)return false;
+  return (await hashPw(n,u.recSalt))===u.rec;
+}
+function saveUser(u){
+  const users=LS(USERS,[]);const i=users.findIndex(x=>x.id===u.id);
+  if(i<0)return false;
+  const c=Object.assign({},u);delete c._needsMigration;users[i]=c;SET(USERS,users);return true;
+}
+function autoKey(){ // clé Openi gratuite générée et activée automatiquement pour un nouveau compte
+  try{if(!keys().some(k=>k.userId===key())){const k=generateKey();activate(k.value)}else if(!unlocked()){activate(keys().find(k=>k.userId===key()).value)}}catch(e){}
+}
+function wipeUserData(id){
+  try{
+    ['conversations','sites','arts','games','claudeMsgs'].forEach(n=>{store[n]=(store[n]||[]).filter(x=>x.userId!==id)});
+    save();SET(KEYS,keys().filter(k=>k.userId!==id));
+    const rm=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.endsWith('_'+id))rm.push(k)}
+    rm.forEach(k=>localStorage.removeItem(k));
+  }catch(e){}
+}
+
+/* ---------- fenêtre « code de récupération » ---------- */
+let recCtx=null;
+function showRecovery(u,o){
+  o=o||{};
+  const code=newRecCode();recCtx={u,code,o};
+  $('recTitle').textContent=o.title||'Ton code de récupération';
+  $('recIntro').textContent=o.intro||'Si tu oublies ton mot de passe, ce code est la seule façon de retrouver ton compte. Note-le ou télécharge-le, et garde-le en lieu sûr.';
+  $('recCode').textContent=code;$('recAck').checked=false;$('recGo').disabled=true;setMsg($('recMsg'),'');
+  $('recLater').classList.toggle('hidden',!!o.mandatory);
+  $('recov').classList.remove('hidden');
+  setTimeout(()=>$('recCopy').focus(),50);
+}
+function closeRecovery(){$('recov').classList.add('hidden');recCtx=null}
+$('recAck').onchange=()=>{$('recGo').disabled=!$('recAck').checked};
+$('recCopy').onclick=async()=>{const ok=await copyTextSafe($('recCode').textContent);const b=$('recCopy'),t='📋 Copier';b.textContent=ok?'✅ Copié !':'Sélectionne et copie à la main';setTimeout(()=>b.textContent=t,1600)};
+$('recDl').onclick=()=>{
+  if(!recCtx)return;
+  const txt=`IA PRINCESSE · CODE DE RÉCUPÉRATION\r\n\r\nCompte : ${recCtx.u.email}\r\nCode   : ${recCtx.code}\r\nCréé le : ${new Date().toLocaleString('fr-FR')}\r\n\r\nGarde ce fichier en lieu sûr. Il permet de changer ton mot de passe si tu l'oublies.\r\nNe le partage avec personne.\r\n`;
+  saveFile('Code-de-recuperation-IA-Princesse.txt',txt,'text/plain');
+};
+$('recGo').onclick=async()=>{
+  if(!recCtx||!$('recAck').checked)return;
+  const btn=$('recGo');btn.disabled=true;
+  try{
+    const {u,code,o}=recCtx;
+    await setRec(u,code);
+    if(!saveUser(u))throw new Error('enregistrement impossible');
+    if(me&&me.id===u.id)me=Object.assign(me,{rec:u.rec,recSalt:u.recSalt,recAt:u.recAt});
+    closeRecovery();
+    if(o.onDone)o.onDone(true);
+  }catch(e){setMsg($('recMsg'),'Impossible d\'enregistrer le code ('+(e?.message||'erreur')+'). Réessaie.');btn.disabled=false}
+};
+$('recLater').onclick=()=>{const o=recCtx?.o||{};closeRecovery();if(o.onDone)o.onDone(false)};
+
+/* ---------- afficher/masquer un mot de passe (fonctionne aussi pour les champs créés plus tard) ---------- */
+document.addEventListener('click',e=>{
+  const b=e.target.closest?e.target.closest('.pwtoggle'):null;if(!b)return;
+  const inp=$(b.dataset.target);if(!inp)return;
+  const show=inp.type==='password';inp.type=show?'text':'password';b.textContent=show?'🙈':'👁️';inp.focus();
+});
+/* ---------- avertissement verrouillage majuscules ---------- */
+$('password').addEventListener('keyup',e=>{try{$('capsHint').classList.toggle('hidden',!e.getModifierState('CapsLock'))}catch(_){}});
+$('password').addEventListener('blur',()=>$('capsHint').classList.add('hidden'));
+
+/* ---------- vues de l'écran d'accueil ---------- */
+function view(n){
+  ['Main','Forgot','NoCode'].forEach(x=>$('view'+x).classList.toggle('hidden',x.toLowerCase()!==n));
+  setMsg($('authMsg'),'');
+}
+function authMode(s){
+  signup=s;
+  $('loginTab').classList.toggle('active',!s);$('signupTab').classList.toggle('active',s);
+  $('pseudoWrap').classList.toggle('hidden',!s);$('pw2Wrap').classList.toggle('hidden',!s);
+  $('forgotBtn').classList.toggle('hidden',s);
+  $('password').autocomplete=s?'new-password':'current-password';
+  $('authBtn').textContent=s?'Créer mon compte':'Se connecter';
+  setMsg($('authMsg'),'');
+  if(s)pwMeter($('password'),$('pwHint'));else $('pwHint').classList.add('hidden');
+}
+$('loginTab').onclick=()=>authMode(false);
+$('signupTab').onclick=()=>authMode(true);
+$('password').oninput=()=>{if(signup)pwMeter($('password'),$('pwHint'))};
+$('fpw').oninput=()=>pwMeter($('fpw'),$('fpwHint'));
+
+/* ---------- inscription + connexion ---------- */
+let authBusy=false;
+function enterApp(u,first){
+  me=u;start();
+  if(!u.rec)showRecovery(u,{mandatory:!!first,
+    title:first?'Bienvenue ! Voici ton code de récupération':'Protège ton compte',
+    intro:first?'Garde-le précieusement : si tu oublies ton mot de passe, ce code est la seule façon de retrouver ton compte (aucun email n\'est envoyé, tout reste sur cet appareil).'
+               :'Ton compte n\'a pas encore de code de récupération. Crée-le maintenant : sans lui, un mot de passe oublié = compte perdu.',
+    onDone:()=>{if(currentPage==='settings')render()}});
+}
+$('authForm').onsubmit=async e=>{
+  e.preventDefault();if(authBusy)return;
+  const msg=$('authMsg'),btn=$('authBtn');setMsg(msg,'');
+  if(!storageOK()){setMsg(msg,'Ton navigateur bloque le stockage local (navigation privée ?). Ouvre l\'application dans une fenêtre normale.');return}
+  const email=$('email').value.trim().toLowerCase(),pw=$('password').value,pseudo=$('pseudo').value.trim(),remember=$('remember').checked;
+  if(!EMAIL_RE.test(email)){setMsg(msg,'Entre une adresse email valide.');$('email').focus();return}
+  if(signup){
+    const pb=pwProblem(pw,email);if(pb){setMsg(msg,pb);$('password').focus();return}
+    if(pw!==$('password2').value){setMsg(msg,'Les deux mots de passe ne sont pas identiques.');$('password2').focus();return}
+  }else if(!pw){setMsg(msg,'Entre ton mot de passe.');$('password').focus();return}
+  authBusy=true;btn.disabled=true;const old=btn.textContent;btn.textContent=signup?'Création…':'Connexion…';
+  try{
+    const users=LS(USERS,[]);
+    if(signup){
+      if(users.some(u=>u.email===email)){setMsg(msg,'Ce compte existe déjà. Connecte-toi, ou utilise « Mot de passe oublié ».');return}
+      const u={id:uid(),email,pseudo:(pseudo||email.split('@')[0]).slice(0,24),plan:'free',planName:'Gratuit',created:Date.now()};
+      await setPw(u,pw);users.push(u);SET(USERS,users);
+      if(!LS(USERS,[]).some(x=>x.id===u.id))throw new Error('enregistrement impossible');
+      sessSet(u.id,remember);me=u;autoKey();enterApp(u,true);
+    }else{
+      const left=lockLeft(email);
+      if(left){setMsg(msg,`Trop d'essais. Réessaie dans ${fmtWait(left)}.`);return}
+      const u=users.find(x=>x.email===email);
+      const ok=u?await verifyPw(pw,u):(await hashPw(pw,'00'),false);
+      if(!ok){
+        registerFail(email);const l2=lockLeft(email);
+        setMsg(msg,l2?`Trop d'essais. Réessaie dans ${fmtWait(l2)}.`:'Email ou mot de passe incorrect.');return}
+      clearAttempts(email);
+      if(u._needsMigration){delete u._needsMigration;await setPw(u,pw);saveUser(u)}
+      sessSet(u.id,remember);me=u;enterApp(u,false);
+    }
+  }catch(err){
+    setMsg(msg,'Une erreur est survenue ('+(err?.message||'inconnue')+'). Réessaie.');
+  }finally{authBusy=false;btn.disabled=false;btn.textContent=old}
+};
+$('logout').onclick=()=>{sessClear();location.reload()};
+
+/* ---------- mot de passe oublié (par code de récupération) ---------- */
+$('forgotBtn').onclick=()=>{$('fEmail').value=$('email').value.trim();$('fCode').value='';$('fpw').value='';$('fpw2').value='';$('fpwHint').classList.add('hidden');
+  view('forgot');($('fEmail').value?$('fCode'):$('fEmail')).focus()};
+$('forgotCancel').onclick=()=>{view('main');authMode(false)};
+$('noCodeBtn').onclick=()=>{$('dEmail').value=$('fEmail').value.trim();$('dConf').value='';view('nocode')};
+$('noCodeBack').onclick=()=>view('forgot');
+$('fCode').addEventListener('input',()=>{ // met le code en forme PRIN-XXXX-XXXX-XXXX pendant la frappe
+  const n=normRec($('fCode').value.toUpperCase().startsWith('PRIN')?$('fCode').value:'PRIN'+$('fCode').value);
+  // on ne reformate que si l'utilisateur a saisi assez de caractères, pour ne pas gêner l'édition
+  if(n.length===12)$('fCode').value='PRIN-'+n.slice(0,4)+'-'+n.slice(4,8)+'-'+n.slice(8,12);
+});
+$('forgotForm').onsubmit=async e=>{
+  e.preventDefault();if(authBusy)return;
+  const msg=$('authMsg'),btn=$('forgotGo');setMsg(msg,'');
+  if(!storageOK()){setMsg(msg,'Ton navigateur bloque le stockage local (navigation privée ?).');return}
+  const email=$('fEmail').value.trim().toLowerCase(),code=$('fCode').value,pw=$('fpw').value,pw2=$('fpw2').value;
+  if(!EMAIL_RE.test(email)){setMsg(msg,'Entre une adresse email valide.');$('fEmail').focus();return}
+  if(normRec(code).length!==12){setMsg(msg,'Le code de récupération a 12 caractères, par exemple PRIN-ABCD-EFGH-JKMN.');$('fCode').focus();return}
+  const pb=pwProblem(pw,email);if(pb){setMsg(msg,pb);$('fpw').focus();return}
+  if(pw!==pw2){setMsg(msg,'Les deux mots de passe ne sont pas identiques.');$('fpw2').focus();return}
+  const lk='rec:'+email,left=lockLeft(lk);
+  if(left){setMsg(msg,`Trop d'essais. Réessaie dans ${fmtWait(left)}.`);return}
+  authBusy=true;btn.disabled=true;const old=btn.textContent;btn.textContent='Vérification…';
+  try{
+    const u=LS(USERS,[]).find(x=>x.email===email);
+    const ok=u?await verifyRec(u,code):(await hashPw(normRec(code),'00'),false);
+    if(!ok){
+      registerFail(lk);const l2=lockLeft(lk);
+      setMsg(msg,l2?`Trop d'essais. Réessaie dans ${fmtWait(l2)}.`:'Email ou code de récupération incorrect. Pas de code ? Clique sur « Je n\'ai pas mon code ».');return}
+    clearAttempts(lk);clearAttempts(email);
+    await setPw(u,pw);
+    if(!saveUser(u))throw new Error('enregistrement impossible');
+    showRecovery(u,{mandatory:true,title:'Mot de passe changé ✅',
+      intro:'Pour ta sécurité, voici un NOUVEAU code de récupération. L\'ancien sera remplacé quand tu cliqueras sur Continuer.',
+      onDone:()=>{view('main');authMode(false);$('email').value=email;$('password').value='';
+        setMsg($('authMsg'),'✅ Mot de passe changé. Connecte-toi avec le nouveau.',true);$('password').focus()}});
+  }catch(err){
+    setMsg(msg,'Une erreur est survenue ('+(err?.message||'inconnue')+'). Réessaie.');
+  }finally{authBusy=false;btn.disabled=false;btn.textContent=old}
+};
+
+/* ---------- secours : supprimer le compte quand on n'a pas le code ---------- */
+$('delForm').onsubmit=e=>{
+  e.preventDefault();const msg=$('authMsg');setMsg(msg,'');
+  const email=$('dEmail').value.trim().toLowerCase();
+  if(!EMAIL_RE.test(email)){setMsg(msg,'Entre l\'email du compte.');return}
+  if($('dConf').value.trim().toUpperCase()!=='SUPPRIMER'){setMsg(msg,'Tape le mot SUPPRIMER pour confirmer.');return}
+  const users=LS(USERS,[]);const u=users.find(x=>x.email===email);
+  if(!u){setMsg(msg,'Aucun compte avec cet email sur cet appareil.');return}
+  wipeUserData(u.id);SET(USERS,users.filter(x=>x.id!==u.id));clearAttempts(email);clearAttempts('rec:'+email);
+  const sid=sessGet();if(sid===u.id)sessClear();
+  view('main');authMode(true);$('email').value=email;$('password').value='';$('password2').value='';
+  setMsg($('authMsg'),'🗑️ Compte supprimé. Tu peux en créer un nouveau avec le même email.',true);$('pseudo').focus();
+};
+
+/* ---------- carte « Sécurité du compte » dans ⚙️ Paramètres ---------- */
+function securityCardHTML(){
+  const u=LS(USERS,[]).find(x=>x.id===me.id)||me;
+  const rec=u.rec?`<span style="color:#3bffa0">✅ Actif</span> · créé le ${new Date(u.recAt||u.created).toLocaleDateString('fr-FR')}`
+                  :'<span style="color:var(--gold)">⚠️ Aucun</span> — si tu oublies ton mot de passe, le compte sera perdu';
+  const pw=(id,ph,ac)=>`<div class="pwwrap"><input id="${id}" class="field" type="password" placeholder="${ph}" autocomplete="${ac}"><button type="button" class="pwtoggle" data-target="${id}" aria-label="Afficher le mot de passe">👁️</button></div>`;
+  return `<div class="card"><b>🔐 Sécurité du compte</b>
+    <p class="small" style="line-height:1.7;margin:6px 0 4px">Code de récupération : ${rec}</p>
+    ${pw('secCur','Mot de passe actuel (obligatoire)','current-password')}
+    ${pw('secNew','Nouveau mot de passe','new-password')}
+    <div id="secHint" class="small hidden" style="margin-top:6px"></div>
+    ${pw('secNew2','Confirme le nouveau mot de passe','new-password')}
+    <div class="row" style="margin-top:12px"><button id="secChange" class="mainbtn" type="button">🔒 Changer le mot de passe</button>
+      <button id="secRec" class="ghost" type="button">🛟 ${u.rec?'Générer un nouveau code':'Créer mon code de récupération'}</button></div>
+    <div id="secMsg" class="msg" role="alert"></div></div>`;
+}
+function bindSecurityCard(){
+  const msg=$('secMsg');if(!msg)return;
+  $('secNew').oninput=()=>pwMeter($('secNew'),$('secHint'));
+  // vérifie le mot de passe actuel (avec verrouillage anti force-brute) ; renvoie l'utilisateur à jour ou null
+  async function checkCurrent(){
+    const cur=$('secCur').value;if(!cur){setMsg(msg,'Entre ton mot de passe actuel.');$('secCur').focus();return null}
+    const u=LS(USERS,[]).find(x=>x.id===me.id);if(!u){setMsg(msg,'Compte introuvable.');return null}
+    const lk='chg:'+u.email,left=lockLeft(lk);
+    if(left){setMsg(msg,`Trop d'essais. Réessaie dans ${fmtWait(left)}.`);return null}
+    if(!await verifyPw(cur,u)){registerFail(lk);setMsg(msg,'Mot de passe actuel incorrect.');return null}
+    clearAttempts(lk);
+    if(u._needsMigration){delete u._needsMigration;await setPw(u,cur);saveUser(u)}
+    return u;
+  }
+  $('secChange').onclick=async()=>{
+    setMsg(msg,'');const b=$('secChange');b.disabled=true;
+    try{
+      const nw=$('secNew').value,nw2=$('secNew2').value;
+      if(!$('secCur').value){setMsg(msg,'Entre ton mot de passe actuel.');return}
+      const pb=pwProblem(nw,me.email);if(pb){setMsg(msg,pb);return}
+      if(nw!==nw2){setMsg(msg,'Les deux nouveaux mots de passe ne sont pas identiques.');return}
+      if(nw===$('secCur').value){setMsg(msg,'Le nouveau mot de passe doit être différent de l\'actuel.');return}
+      const u=await checkCurrent();if(!u)return;
+      await setPw(u,nw);if(!saveUser(u))throw new Error('enregistrement impossible');
+      me=Object.assign(me,{pass:u.pass,salt:u.salt,hashVer:u.hashVer});
+      ['secCur','secNew','secNew2'].forEach(i=>$(i).value='');$('secHint').classList.add('hidden');
+      setMsg(msg,'✅ Mot de passe changé.',true);
+    }catch(err){setMsg(msg,'Erreur : '+(err?.message||'inconnue'))}finally{b.disabled=false}
+  };
+  $('secRec').onclick=async()=>{
+    setMsg(msg,'');const b=$('secRec');b.disabled=true;
+    try{
+      const u=await checkCurrent();if(!u)return;
+      $('secCur').value='';
+      showRecovery(u,{mandatory:false,title:'Nouveau code de récupération',
+        intro:'Ce code remplacera l\'ancien quand tu cliqueras sur Continuer. Si tu choisis « Plus tard », l\'ancien code reste valable.',
+        onDone:ok=>{if(ok)render()}});
+    }catch(err){setMsg(msg,'Erreur : '+(err?.message||'inconnue'))}finally{b.disabled=false}
+  };
+}
+/* ---------- V13.2 : intelligence renforcée ---------- */
+const PRO_BOOST=`
+
+=== MODE PRO · RAISONNEMENT RENFORCÉ ===
+Tu es en mode PRO : tu dois être nettement plus fiable et plus fine que d'habitude.
+1. Comprends d'abord l'intention réelle derrière la demande (pas seulement les mots). Si la demande est ambiguë ET que la réponse changerait beaucoup selon le choix, pose UNE seule question courte ; sinon fais l'hypothèse la plus probable et annonce-la en une phrase.
+2. Pour les maths, la logique, les sciences, les calculs et le code : raisonne étape par étape, puis VÉRIFIE ton résultat (recalcule autrement, teste mentalement le code, cherche les cas limites) avant de donner la réponse finale. Si un doute subsiste, dis-le honnêtement.
+3. Donne la réponse directe en premier, puis les explications. Utilise des listes ou des étapes seulement quand elles aident vraiment. Le code doit être complet, cohérent et prêt à l'emploi.
+4. Adapte le niveau et le ton à la façon d'écrire de la personne (collégien, lycéen, adulte, débutant, expert). Explique simplement et illustre avec un exemple concret quand c'est utile.
+5. N'invente JAMAIS de faits, de chiffres, de sources, de citations ou de liens. Quand tu n'es pas sûre, écris « je ne suis pas sûre » et explique comment vérifier.
+6. Si l'utilisateur te corrige et qu'il a raison, reconnais-le en une phrase et corrige sans te justifier longuement. S'il a tort, explique poliment pourquoi avec un argument précis.
+7. Tiens compte de tout l'historique de la conversation et de ce que tu sais déjà de la personne : ne redemande pas ce qui a déjà été dit.
+8. Termine par une suite utile (question ou prochaine étape) en UNE ligne, seulement si c'est vraiment pertinent.`;
+
+const PROFILE_KEY=()=>'openi_profile_'+key();
+const getProfile=()=>{const p=LS(PROFILE_KEY(),[]);return Array.isArray(p)?p.filter(x=>typeof x==='string'):[]};
+const setProfile=a=>SET(PROFILE_KEY(),a.slice(0,14));
+function INSTR_NOW(){
+  if(!PROMODE())return INSTR;
+  const f=getProfile();
+  return INSTR+PRO_BOOST+(f.length?`\n\nCe que tu sais déjà sur l'utilisateur (mémoire persistante — utilise-le naturellement, sans le réciter) :\n- ${f.join('\n- ')}`:'');
+}
+async function updateProfile(c,fn){
+  if(!PROMODE())return;
+  const n=c.messages.filter(m=>m.role==='user').length;
+  if(n<2||n%4!==0)return; // toutes les 4 questions environ, en tâche de fond
+  try{
+    const recent=c.messages.slice(-8).map(m=>(m.role==='user'?'Utilisateur':'IA')+' : '+(m.text||'').slice(0,500)).join('\n');
+    const r=await fn([{role:'user',content:`Tu tiens la fiche mémoire d'un utilisateur d'une appli de chat.
+Fiche actuelle (JSON) : ${JSON.stringify(getProfile())}
+Derniers échanges :
+${recent}
+
+Mets la fiche à jour. Garde uniquement des faits DURABLES et utiles pour mieux aider plus tard : prénom ou surnom, niveau scolaire ou âge approximatif s'il l'a dit, sujets/jeux/langages qu'il aime, projets en cours, façon de répondre qu'il préfère.
+Ne note JAMAIS : mots de passe, emails, numéros de téléphone, adresses, données de santé, informations sur d'autres personnes.
+Maximum 12 éléments, chacun une courte phrase. Supprime ce qui est devenu faux.
+Réponds UNIQUEMENT avec un tableau JSON de chaînes, sans aucun autre texte.`}],{cache:false,modelTier:'complex'});
+    const m=(r.text||'').match(/\[[\s\S]*\]/);if(!m)return;
+    const arr=JSON.parse(m[0]);if(!Array.isArray(arr))return;
+    const clean=arr.filter(x=>typeof x==='string').map(x=>x.trim().slice(0,140)).filter(Boolean);
+    if(clean.length)setProfile(clean);
+  }catch(e){/* silencieux : on retentera plus tard */}
+}
+function memCardHTML(){
+  const f=getProfile();
+  return `<div class="card"><b>🧠 Mémoire PRO</b>
+    <p class="small" style="line-height:1.6;margin:6px 0">IA Princesse PRO retient quelques infos utiles sur toi (jamais de mot de passe ni de données sensibles) pour mieux t'aider d'une discussion à l'autre. Elles restent uniquement sur cet appareil.</p>
+    ${f.length?`<ul class="small" style="line-height:1.7;padding-left:18px;margin:8px 0">${f.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'<p class="small">Rien de mémorisé pour l\'instant.</p>'}
+    <button id="memClear" class="ghost dangerbtn" type="button" ${f.length?'':'disabled'}>🗑️ Effacer ma mémoire</button></div>`;
+}
+function bindMem(){const b=$('memClear');if(b)b.onclick=()=>{try{localStorage.removeItem(PROFILE_KEY())}catch(e){}render()}}
+
+
+/* ---------- navigation ---------- */
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{currentPage=b.dataset.page;closeMenu();render()});
+$('sideClose').onclick=()=>closeMenu();$('overlay').onclick=()=>closeMenu();
+function closeMenu(){$('side').classList.remove('open');$('overlay').classList.remove('show')}
+function header(t,s,a=''){return `<div class="top"><div class="row" style="gap:12px;flex-wrap:nowrap;min-width:0">
+  <button class="menu" onclick="document.getElementById('side').classList.add('open');document.getElementById('overlay').classList.add('show')">☰</button>
+  <div style="min-width:0"><div class="title">${t}</div><div class="small">${s||''}</div></div></div><div class="row">${a}</div></div>`}
+
+function render(){
+  document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===currentPage));
+  $('keyDot').textContent=unlocked()?'●':'';document.body.classList.toggle('gold',plan()==='ultra');
+  const p=$('page');p.innerHTML='';
+  if(currentPage!=='videos'&&videoTimer){clearInterval(videoTimer);videoTimer=null}
+  ({chat:pageChat,roblox:pageRoblox,code:pageCode,openia:pageOpenia,history:pageHistory,sites:pageSites,games:pageGames,images:pageImages,videos:pageVideos,connect:pageConnect,plans:pagePlans,claude:pageClaudeMode,settings:pageSettings}[currentPage]||pageChat)(p);
+}
+
+
+/* ---------- page Princesse IA Code ---------- */
+function pageCode(p){
+  p.innerHTML=`
+  <div style="height:100%;display:flex;flex-direction:column;min-height:650px">
+    ${header('⌘ Princesse IA Code','Chat IA + éditeur multi-fichiers. Utilise le même moteur IA que la Discussion.')}
+    <div style="display:grid;grid-template-columns:220px minmax(0,1fr) 380px;gap:12px;padding:12px 20px 20px;flex:1;min-height:0">
+      <aside class="card" style="padding:14px;overflow:auto"><b>📁 Projet</b><div class="small" style="margin:5px 0 12px">Fichiers de la session.</div><button id="codeAdd" class="ghost" style="width:100%;margin-bottom:10px">＋ Nouveau fichier</button><div id="codeFiles"></div></aside>
+      <main class="card" style="padding:0;overflow:hidden;display:flex;flex-direction:column"><div style="padding:10px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center"><span id="codeFileName" class="small">Aucun fichier</span><div class="row"><button id="codeSave" class="ghost">💾 Enregistrer</button><button id="codeCopy" class="ghost">📋 Copier</button><button id="codeDl" class="ghost">⬇️ Télécharger</button></div></div><textarea id="codeEditor" spellcheck="false" style="flex:1;min-height:430px;width:100%;resize:none;border:0;background:#090a10;color:#e8e9f2;padding:18px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.55;outline:none" placeholder="Le code généré apparaîtra ici..."></textarea></main>
+      <section class="card" style="padding:0;overflow:hidden;display:flex;flex-direction:column"><div style="padding:13px 15px;border-bottom:1px solid var(--line)"><b>🤖 Chat Princesse IA Code</b><div id="codeHint" class="small" style="margin-top:4px"></div></div><div id="codeChat" style="flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px"></div><div style="padding:12px;border-top:1px solid var(--line)"><textarea id="codePrompt" class="field" style="height:90px" placeholder="Ex : écris une fonction JS qui trie un tableau d'objets par date"></textarea><button id="codeRun" class="mainbtn" style="width:100%;margin-top:8px">▶ Envoyer</button></div></section>
+    </div>
+  </div>`;
+  const files=[{name:'README.md',code:'# Projet Princesse IA Code\n'}];let active=0,history=[];
+  const editor=$('codeEditor'),list=$('codeFiles'),chat=$('codeChat');
+  function renderFiles(){list.innerHTML=files.map((f,i)=>`<button class="ghost" data-i="${i}" style="width:100%;text-align:left;margin-bottom:6px">📄 ${esc(f.name)}</button>`).join('');list.querySelectorAll('button').forEach(b=>b.onclick=()=>open(+b.dataset.i))}
+  function open(i){if(active>=0&&files[active])files[active].code=editor.value;active=i;editor.value=files[i].code;$('codeFileName').textContent=files[i].name;renderFiles()}
+  function say(who,msg){const d=document.createElement('div');d.style.cssText='padding:10px 12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.04);font-size:13px';d.innerHTML='<div class="small" style="margin-bottom:5px">'+(who==='user'?'🧑 Toi':'🤖 Princesse IA Code')+'</div>'+fmt(msg);chat.appendChild(d);chat.scrollTop=chat.scrollHeight}
+  async function refreshHint(){const fn=await engine();$('codeHint').textContent=fn?'IA active · même moteur que la Discussion.':noEngineMsg()}
+  renderFiles();open(0);refreshHint();say('assistant','Bonjour 👋 Je suis Princesse IA Code. Décris ce que tu veux coder, je peux répartir le résultat sur plusieurs fichiers si besoin.');
+  $('codeAdd').onclick=()=>{const n=prompt('Nom du fichier :','nouveau_fichier.txt');if(!n)return;files.push({name:n.replace(/[\\/:*?"<>|]/g,'_'),code:''});open(files.length-1)};
+  $('codeSave').onclick=()=>{files[active].code=editor.value};
+  $('codeCopy').onclick=()=>navigator.clipboard?.writeText(editor.value);
+  $('codeDl').onclick=()=>saveFile(files[active].name,editor.value,'text/plain');
+  $('codeRun').onclick=async()=>{
+    const q=$('codePrompt').value.trim();if(!q)return;
+    const btn=$('codeRun');btn.disabled=true;say('user',q);history.push({role:'user',content:q});
+    const fn=await engine();
+    if(!fn){say('assistant','⚠️ Le moteur IA n\'est pas disponible pour le moment, vérifie ta connexion internet.');btn.disabled=false;return}
+    try{
+      const sys='Tu es Princesse IA Code, une assistante de programmation. Réponds en français, donne du code complet et propre dans des blocs ```langage ... ```. Si le code va dans plusieurs fichiers, indique le nom du fichier juste avant chaque bloc, sur une ligne du type "FICHIER: nom.ext".';
+      const r=await fn([{role:'user',content:sys+'\n\n(Réponds "Prête 👑" à ce message d\'installation.)'},{role:'assistant',content:'Prête 👑'},...history],{});
+      const reply=r.text||'';history.push({role:'assistant',content:reply});say('assistant',reply);
+      const re=/FICHIER:\s*([^\n]+)\n```[a-z]*\s*([\s\S]*?)```/gi;let any=false,m;
+      while((m=re.exec(reply))){any=true;const name=m[1].trim(),code=m[2].trim();
+        const i=files.findIndex(f=>f.name===name);
+        if(i>=0)files[i].code=code;else files.push({name,code});}
+      if(!any){const m2=reply.match(/```[a-z]*\s*([\s\S]*?)```/i);if(m2)files[active].code=m2[1].trim()}
+      renderFiles();editor.value=files[active].code;
+    }catch(e){say('assistant','⚠️ '+(e.message||'Erreur du moteur IA.'))}
+    $('codePrompt').value='';btn.disabled=false;
+  };
+  $('codePrompt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('codeRun').click()}});
+}
+/* ---------- page Roblox Studio IA ---------- */
+function pageRoblox(p){
+  if(!unlocked())return needKey(p,'Roblox Studio IA');
+
+  p.innerHTML=`
+  <div style="height:100%;display:flex;flex-direction:column;min-height:650px">
+    <div class="card" style="margin-bottom:12px;padding:12px 16px">
+      <div class="row" style="justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:20px;font-weight:800">🎮 Roblox Studio IA</div>
+          <div class="small">Workspace de développement Roblox · ton IA générale reste séparée</div>
+        </div>
+        <div class="row">
+          <select id="rbxModel" class="field" style="width:auto;padding:9px 12px">
+            <option value="sonnet2">Sonnet 2.0</option>
+            <option value="sonnet3">Sonnet 3.0 · 5,99 €</option>
+            <option value="ultra5">Ultra 5.0 · Méga intelligent</option>
+          </select>
+          <button id="rbxNew" class="ghost">＋ Nouveau projet</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px;padding:14px 16px">
+      <div class="row" style="justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <b>🌳 Construire en direct <span class="badge" style="margin-left:6px">Ultra 👑</span></b>
+          <div class="small" style="margin-top:4px">Le plugin Studio installé sur ta place construit tout seul ce que tu demandes ici.</div>
+        </div>
+        <span id="liveStatus" class="badge">Vérification…</span>
+      </div>
+      ${plan()==='ultra' ? `
+      <div class="row" style="margin-top:12px">
+        <input id="liveInput" class="field" style="flex:1;min-width:220px" placeholder="Ex : un arbre">
+        <button id="liveGo" class="mainbtn">⚡ Construire dans le jeu</button>
+      </div>
+      <div id="liveMsg" class="small" style="margin-top:8px"></div>
+      ` : `
+      <div class="item" style="margin-top:12px">Passe au forfait <b>Ultra 👑</b> pour que l'IA construise directement dans Roblox Studio pendant que tu discutes ici.
+        <div class="row" style="margin-top:8px"><button class="mainbtn" onclick="currentPage='plans';render()">👑 Passer à Ultra</button></div></div>
+      `}
+    </div>
+
+    <div style="display:grid;grid-template-columns:230px minmax(0,1fr) 330px;gap:12px;flex:1;min-height:560px">
+      <aside class="card" style="padding:12px;overflow:auto">
+        <div class="small" style="text-transform:uppercase;letter-spacing:.08em">Projet</div>
+        <div id="rbxTree" style="margin-top:12px">
+          <div class="small">Aucun fichier</div>
+        </div>
+        <button id="rbxAdd" class="ghost" style="width:100%;margin-top:14px">＋ Ajouter un script</button>
+      </aside>
+
+      <main class="card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px">
+          <div id="rbxTab" class="small">Aucun script ouvert</div>
+          <div class="row">
+            <button id="rbxCopy" class="ghost">📋 Copier</button>
+            <button id="rbxDownload" class="ghost">💾 .lua</button>
+          </div>
+        </div>
+        <textarea id="rbxEditor" spellcheck="false"
+          style="flex:1;min-height:420px;width:100%;resize:none;border:0;border-radius:0;background:#090a10;color:#e8e9f2;padding:18px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.55;outline:none"
+          placeholder="Le code du script sélectionné apparaîtra ici..."></textarea>
+        <div style="padding:9px 14px;border-top:1px solid var(--line);display:flex;justify-content:space-between">
+          <span id="rbxEditorStatus" class="small">Prêt</span>
+          <span class="small">Luau · Roblox Studio</span>
+        </div>
+      </main>
+
+      <section class="card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">
+        <div style="padding:13px 15px;border-bottom:1px solid var(--line)">
+          <b>🤖 Assistant Roblox</b>
+          <div class="small" style="margin-top:4px">Décris ce que tu veux construire.</div>
+        </div>
+        <div id="rbxChat" style="flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px">
+        </div>
+        <div style="padding:12px;border-top:1px solid var(--line)">
+          <textarea id="rbxPrompt" class="field" style="height:100px"
+            placeholder="Ex : crée un shop complet avec plusieurs scripts..."></textarea>
+          <button id="rbxGo" class="mainbtn" style="width:100%;margin-top:8px">⚡ Générer</button>
+          <div id="rbxStatus" class="small" style="margin-top:8px"></div>
+        </div>
+      </section>
+    </div>
+  </div>`;
+
+  const prompt=$('rbxPrompt'),go=$('rbxGo'),chat=$('rbxChat'),tree=$('rbxTree'),
+        editor=$('rbxEditor'),tab=$('rbxTab'),status=$('rbxStatus');
+  let files=[],active=-1,history=[];
+
+  function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+  function addChat(role,text){
+    const d=document.createElement('div');
+    d.style.cssText='padding:10px 12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.04)';
+    d.innerHTML='<div class="small" style="margin-bottom:5px">'+(role==='user'?'🧑 Toi':'🤖 Roblox IA')+'</div><div style="white-space:pre-wrap;word-break:break-word;font-size:13px">'+esc(text)+'</div>';
+    chat.appendChild(d);chat.scrollTop=chat.scrollHeight;
+  }
+
+  function renderTree(){
+    tree.innerHTML=files.length?files.map((f,i)=>`
+      <button class="ghost rbxFile" data-i="${i}" style="width:100%;text-align:left;margin-bottom:6px;${i===active?'outline:1px solid var(--accent)':''}">
+        📄 ${esc(f.name)}<div class="small" style="margin-left:22px">${esc(f.place)}</div>
+      </button>`).join(''):'<div class="small">Aucun fichier</div>';
+    p.querySelectorAll('.rbxFile').forEach(b=>b.onclick=()=>openFile(+b.dataset.i));
+  }
+
+  function openFile(i){
+    if(active>=0)files[active].code=editor.value;
+    active=i;
+    editor.value=files[i].code;
+    tab.textContent=files[i].name;
+    $('rbxEditorStatus').textContent=files[i].place;
+    renderTree();
+  }
+
+  function addFile(){
+    files.push({name:'Script_'+(files.length+1)+'.server.lua',place:'ServerScriptService',code:'-- Nouveau script Roblox\\n'});
+    openFile(files.length-1);
+  }
+
+  $('rbxAdd').onclick=addFile;
+
+  $('rbxCopy').onclick=async()=>{
+    if(active<0)return;
+    try{
+      await navigator.clipboard.writeText(editor.value);
+      $('rbxEditorStatus').textContent='✅ Copié';
+      setTimeout(()=>openFile(active),900);
+    }catch{$('rbxEditorStatus').textContent='⚠️ Copie impossible'}
+  };
+
+  $('rbxDownload').onclick=()=>{
+    if(active<0)return;
+    const f=files[active];
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([editor.value],{type:'text/plain;charset=utf-8'}));
+    a.download=f.name;a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  };
+
+  $('rbxNew').onclick=()=>{
+    files=[];active=-1;history=[];chat.innerHTML='';editor.value='';tab.textContent='Aucun script ouvert';
+    renderTree();addChat('assistant','Nouveau projet Roblox créé. Décris ton système et je peux organiser plusieurs scripts.');
+  };
+
+  addChat('assistant','Salut 👋 Je suis ton espace Roblox IA. Décris ton idée : je peux organiser le projet en plusieurs scripts et afficher chaque fichier à gauche.');
+
+  // ---- Construction en direct via le plugin Studio (forfait Ultra) ----
+  const ROBLOX_SERVER='http://localhost:8787';
+  const liveStatus=$('liveStatus');
+  async function checkLive(){
+    if(!liveStatus)return;
+    try{
+      const r=await fetch(ROBLOX_SERVER+'/api/roblox/status');
+      const d=await r.json();
+      liveStatus.textContent=d.online?'🟢 Plugin en ligne':'🔴 Plugin hors ligne';
+      liveStatus.classList.toggle('ok',!!d.online);
+    }catch{
+      liveStatus.textContent='🔴 Serveur local injoignable';
+      liveStatus.classList.remove('ok');
+    }
+  }
+  if(liveStatus){checkLive();setInterval(checkLive,5000)}
+  const liveGo=$('liveGo');
+  if(liveGo){
+    liveGo.onclick=async()=>{
+      const q=$('liveInput').value.trim();if(!q)return;
+      const msg=$('liveMsg');
+      liveGo.disabled=true;msg.textContent='⏳ L\'IA prépare la construction…';
+      try{
+        const r=await fetch(ROBLOX_SERVER+'/api/roblox/build',{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({prompt:q})
+        });
+        const d=await r.json();
+        if(!r.ok)throw new Error(d.error||'Erreur serveur');
+        msg.textContent=d.online
+          ?`✅ Envoyé au plugin (${d.count} objet(s)) — regarde ton Workspace dans Studio.`
+          :`⚠️ Construction préparée (${d.count} objet(s)), mais le plugin semble hors ligne : ouvre Studio avec le plugin actif pour qu'il la récupère.`;
+        $('liveInput').value='';
+      }catch(e){
+        msg.textContent='❌ '+(e.message||'Impossible de joindre le serveur local (node openi_server.js doit tourner).');
+      }
+      liveGo.disabled=false;
+    };
+    $('liveInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();liveGo.click()}});
+  }
+
+  function parseProject(text){
+    const found=[];
+    const re=/(?:SCRIPT|FICHIER)\s*(?:\d+\s*)?[—:-]\s*([^\n]+)\n```(?:lua|luau)?\s*([\s\S]*?)```/gi;
+    for(const m of String(text).matchAll(re)){
+      const title=m[1].trim(), parts=title.split(/\s*[>│|]\s*/);
+      found.push({
+        name:(parts.at(-1)||'Script.server.lua').trim(),
+        place:parts.length>1?parts.slice(0,-1).join(' > '):'Roblox Studio',
+        code:m[2].trim()
+      });
+    }
+    if(!found.length){
+      for(const m of String(text).matchAll(/```(?:lua|luau)\s*([\s\S]*?)```/gi)){
+        found.push({name:'Script_'+(found.length+1)+'.lua',place:'Roblox Studio',code:m[1].trim()});
+      }
+    }
+    if(found.length){
+      files=found;
+      openFile(0);
+    }
+  }
+
+  function fallback(q){
+    const s=q.toLowerCase();
+    if(s.includes('shop')||s.includes('coins')){
+      return `ARCHITECTURE
+
+SCRIPT 1 — ServerScriptService > Data.server.lua
+\`\`\`lua
+local Players = game:GetService("Players")
+local DataStoreService = game:GetService("DataStoreService")
+local Store = DataStoreService:GetDataStore("PlayerData_v1")
+
+Players.PlayerAdded:Connect(function(player)
+    local stats = Instance.new("Folder")
+    stats.Name = "leaderstats"
+    stats.Parent = player
+
+    local coins = Instance.new("IntValue")
+    coins.Name = "Coins"
+    coins.Value = 0
+    coins.Parent = stats
+
+    local ok, value = pcall(function()
+        return Store:GetAsync("Player_" .. player.UserId)
+    end)
+    if ok and typeof(value) == "number" then
+        coins.Value = value
+    end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    local coins = player:FindFirstChild("leaderstats") and player.leaderstats:FindFirstChild("Coins")
+    if not coins then return end
+    pcall(function()
+        Store:UpdateAsync("Player_" .. player.UserId, function()
+            return coins.Value
+        end)
+    end)
+end)
+\`\`\`
+
+SCRIPT 2 — ServerScriptService > Shop.server.lua
+\`\`\`lua
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local BuyItem = ReplicatedStorage:WaitForChild("BuyItem")
+
+BuyItem.OnServerEvent:Connect(function(player, price)
+    if typeof(price) ~= "number" or price < 0 or price > 100000 then return end
+    local coins = player:FindFirstChild("leaderstats") and player.leaderstats:FindFirstChild("Coins")
+    if coins and coins.Value >= price then
+        coins.Value -= price
+    end
+end)
+\`\`\`
+
+SCRIPT 3 — StarterGui > Shop.client.lua
+\`\`\`lua
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local BuyItem = ReplicatedStorage:WaitForChild("BuyItem")
+
+-- Relie ici tes boutons GUI à BuyItem:FireServer(prix)
+\`\`\`
+
+ReplicatedStorage doit contenir un RemoteEvent nommé BuyItem.`;
+    }
+    return `Je vais organiser ce projet Roblox en plusieurs fichiers si nécessaire.
+
+Demande : ${q}
+
+Version sélectionnée : ${$('rbxModel').value}`;
+  }
+
+  go.onclick=async()=>{
+    const q=prompt.value.trim();if(!q)return;
+    go.disabled=true;status.textContent='⏳ Construction du projet…';
+    addChat('user',q);history.push({role:'user',content:q});
+    const fn=await engine();
+    if(!fn){
+      const answer=fallback(q);
+      history.push({role:'assistant',content:answer});addChat('assistant',answer);parseProject(answer);
+      status.textContent='⚠️ '+noEngineMsg()+' — exemple générique affiché.';
+      prompt.value='';go.disabled=false;prompt.focus();return;
+    }
+    try{
+      const sys='Tu es Roblox IA, spécialisée dans Roblox Studio et le Luau. Découpe le projet en plusieurs scripts si besoin. Pour chaque script, écris une ligne "SCRIPT — Emplacement > NomDuScript.lua" juste avant un bloc ```lua ... ```. Précise le service Roblox (ServerScriptService, StarterPlayerScripts, etc). N\'affirme jamais avoir exécuté le script.';
+      const r=await fn([{role:'user',content:sys+'\n\n(Réponds "Prête 👑" à ce message d\'installation.)'},{role:'assistant',content:'Prête 👑'},...history],{});
+      const answer=r.text||'';
+      history.push({role:'assistant',content:answer});addChat('assistant',answer);parseProject(answer);
+      status.textContent='✅ Projet organisé.';
+    }catch(e){
+      addChat('assistant','⚠️ '+(e.message||'Erreur du moteur IA.'));
+      status.textContent='⚠️ Erreur IA.';
+    }
+    prompt.value='';go.disabled=false;prompt.focus();
+  };
+
+  prompt.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();go.click()}
+  });
+  renderTree();
+}
+
+/* ---------- page Openi.ia ---------- */
+function pageOpenia(p){
+  const all=keys().filter(k=>k.userId===key()),act=activeKeyId();
+  p.innerHTML=header('Openi.ia','Génère ta clé d\'accès au moteur IA.')+`<div class="section">
+    <div class="card spark" style="text-align:center">
+      <div style="font-size:46px">🔑</div>
+      <h2 style="margin:6px 0">Ta clé <span class="gr">Openi.ia</span></h2>
+      <p class="small" style="line-height:1.6;max-width:480px;margin:6px auto 18px">
+        Appuie sur le bouton pour générer une clé unique. Ensuite va dans <b>Discussion</b> : l'app te demandera la clé.
+        Tu la colles, et l'IA se débloque.</p>
+      <button id="genKey" class="mainbtn" style="font-size:16px;padding:15px 28px">⚡ Générer ma clé</button>
+      <div id="newKeyZone" style="margin-top:18px"></div>
+    </div>
+    <div class="card">
+      <b>📜 Mes clés (${all.length})</b>
+      <div class="keyring" style="margin-top:12px">${all.length?all.slice().reverse().map(k=>`
+        <div class="item"><div class="row" style="justify-content:space-between">
+          <span style="font-family:ui-monospace,monospace;font-weight:700">${esc(k.value)}</span>
+          ${k.value===act?'<span class="badge ok">Active</span>':''}</div>
+          <div class="small" style="margin-top:6px">Créée le ${new Date(k.created).toLocaleString('fr-FR')}</div>
+          <div class="row" style="margin-top:10px">
+            <button class="ghost cp" data-v="${esc(k.value)}">📋 Copier</button>
+            <button class="ghost use" data-v="${esc(k.value)}">✅ Utiliser</button>
+            <button class="ghost del" data-id="${k.id}">🗑️</button>
+          </div></div>`).join(''):'<div class="small">Aucune clé pour le moment.</div>'}</div>
+    </div></div>`;
+  $('genKey').onclick=()=>{
+    const k=generateKey();
+    $('newKeyZone').innerHTML=`<div class="keybox">${esc(k.value)}</div>
+      <div class="row" style="justify-content:center;margin-top:12px">
+      <button class="ghost cp2" data-v="${esc(k.value)}">📋 Copier la clé</button>
+      <button class="mainbtn go">💬 Aller à la discussion</button></div>`;
+    $('newKeyZone').querySelector('.cp2').onclick=e=>copy(e.target.dataset.v,e.target);
+    $('newKeyZone').querySelector('.go').onclick=()=>{currentPage='chat';render()};
+    pageOpeniaRefreshList();
+  };
+  p.querySelectorAll('.cp').forEach(b=>b.onclick=()=>copy(b.dataset.v,b));
+  p.querySelectorAll('.use').forEach(b=>b.onclick=()=>{activate(b.dataset.v);currentPage='chat';render()});
+  p.querySelectorAll('.del').forEach(b=>b.onclick=()=>{SET(KEYS,keys().filter(k=>k.id!==b.dataset.id));render()});
+}
+function pageOpeniaRefreshList(){/* la liste se rafraîchit au prochain render */}
+function copy(v,btn){navigator.clipboard?.writeText(v);const t=btn.textContent;btn.textContent='✅ Copié !';setTimeout(()=>btn.textContent=t,1400)}
+
+/* ---------- forfaits ---------- */
+const plan=()=>localStorage.getItem('openi_plan_'+key())||'free';
+const planName=()=>({free:'Gratuit',plus:'Pass Plus ⚡ (gratuit)',ultra:'Pass Ultra 👑 (gratuit)'}[plan()]||'Gratuit');
+const PROMODE=()=>{try{return localStorage.getItem('openi_mode')!=='normal'}catch(e){return true}};
+const tier=()=>PROMODE()?'complex':(plan()==='free'?'default':'complex');
+const today=()=>new Date().toISOString().slice(0,10);
+const CREDIT_LIMITS={free:{chat:20,site:3,art:3,game:2,video:1},plus:{chat:60,site:10,art:10,game:8,video:3},ultra:{chat:Infinity,site:Infinity,art:Infinity,game:Infinity,video:Infinity}};
+const SITE_QUALITY={
+  free:{label:'Version standard (Gratuit)',badge:'⚪ Standard',
+    prompt:'Fais un site simple, propre et fonctionnel : une seule page, mise en page basique, peu de sections, pas d\'animation ni d\'effet visuel avancé. Il doit rester correct et lisible, mais rester volontairement sobre.'},
+  plus:{label:'Version avancée (Pass Plus ⚡)',badge:'⚡ Avancée',
+    prompt:'Fais un site moderne et soigné : design travaillé (couleurs harmonieuses, belle typographie), plusieurs sections bien organisées (héro, contenu, contact...), petites animations au survol, totalement responsive.'},
+  ultra:{label:'Version premium (Pass Ultra 👑)',badge:'👑 Premium',
+    prompt:'Fais un site PREMIUM, au niveau d\'une agence professionnelle : design haut de gamme (dégradés soignés, ombres, mise en page aérée), sections riches et complètes (héro impactant, fonctionnalités, galerie, témoignages, contact), animations fluides et micro-interactions, totalement responsive et très abouti visuellement. Ne fais pas les choses à moitié : vise la meilleure qualité possible.'}
+};
+const siteQuality=()=>SITE_QUALITY[(plan()==='free'&&PROMODE())?'plus':plan()]||SITE_QUALITY.plus;
+function quota(kind,max){
+  const limit=CREDIT_LIMITS[plan()]?.[kind] ?? max;
+  if(limit===Infinity)return true;
+  const k='openi_q_'+kind+'_'+key(), q=LS(k,{d:'',n:0});
+  if(q.d!==today()){q.d=today();q.n=0}
+  if(q.n>=limit)return false; q.n++;SET(k,q);return true }
+function quotaLeft(kind,max){
+  const limit=CREDIT_LIMITS[plan()]?.[kind] ?? max;
+  if(limit===Infinity)return Infinity;
+  const q=LS('openi_q_'+kind+'_'+key(),{d:'',n:0}); return q.d===today()?Math.max(0,limit-q.n):limit }
+const fmtQ=n=>n===Infinity?'illimité ✨':n;
+
+/* ---------- page Chat ---------- */
+let atts=[];
+function pageChat(p){
+  if(!unlocked())return lockScreen(p);
+  if(!currentConv){currentConv=myConvs()[0]?.id||null}
+  let c=store.conversations.find(x=>x.id===currentConv&&x.userId===key());
+  if(!c){c={id:uid(),userId:key(),title:'Nouvelle discussion',messages:[],created:Date.now(),updated:Date.now()};
+    store.conversations.push(c);currentConv=c.id;save()}
+  const suggestions=['Explique-moi les équations du 2nd degré','Regarde cette photo et corrige mon exo 📷','Crée-moi une petite vidéo pour mon anniversaire','Qui est ton créateur ?'];
+  p.innerHTML=header('Discussion',`Salut ${esc(me.pseudo)} 👋 · <span class="gr">${planName()}</span> · ${PROMODE()?'🧠 PRO · ':''}moteur actif`,
+    `<button id="newChat" class="ghost">＋ Nouveau</button>`)
+    +`<div class="chat-wrap"><div id="chat" class="chat">${c.messages.length?c.messages.map(m=>bubble(m)).join(''):
+      `<div class="empty">Écris-moi quelque chose 👑
+      <div class="suggest">${suggestions.map(s=>`<button class="sugg">${esc(s)}</button>`).join('')}</div></div>`}</div>
+      <button id="scrollBtn" class="scrollbtn" title="Aller en bas">⬇️</button></div>
+     <div class="composer"><div id="st" class="status"></div><div id="chips" class="chips"></div><div class="composerRow">
+       <input id="fin" type="file" accept="image/*,.txt,.md,.csv,.json,.js,.ts,.py,.html,.htm,.css,.xml,.log,.yml,.yaml" multiple class="hidden">
+       <button id="att" class="ghost" style="padding:12px 14px" title="Joindre une image ou un fichier (texte/code)">📎</button>
+       <textarea id="input" placeholder="Écris ton message, colle un lien, une image ou un fichier…"></textarea>
+       <button id="send" class="mainbtn send">Envoyer</button></div></div>`;
+  $('newChat').onclick=()=>{
+    const cur=store.conversations.find(x=>x.id===currentConv&&x.userId===key());
+    if(cur&&!cur.messages.length){atts=[];render();return}
+    const nc={id:uid(),userId:key(),title:'Nouvelle discussion',messages:[],created:Date.now(),updated:Date.now()};
+    store.conversations.push(nc);currentConv=nc.id;atts=[];save();render();
+  };
+  $('send').onclick=send;
+  $('att').onclick=()=>$('fin').click();
+  $('fin').onchange=e=>{addAtts(e.target.files);e.target.value=''};
+  const i=$('input');
+  i.oninput=()=>{i.style.height='46px';i.style.height=Math.min(i.scrollHeight,150)+'px'};
+  i.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}};
+  i.onpaste=e=>{const f=[...(e.clipboardData?.files||[])].filter(f=>f.type.startsWith('image/'));if(f.length)addAtts(f)};
+  p.querySelectorAll('.sugg').forEach(b=>b.onclick=()=>{i.value=b.textContent;send()});
+  const wrap=document.querySelector('.chat-wrap');
+  wrap.onscroll=()=>{const nearBottom=wrap.scrollHeight-wrap.scrollTop-wrap.clientHeight<80;$('scrollBtn').classList.toggle('show',!nearBottom)};
+  $('scrollBtn').onclick=()=>scrollChat();
+  drawChips();i.focus();scrollChat();
+}
+function addAtts(files){
+  [...files].slice(0,6-atts.length).forEach(f=>{
+    if(f.type.startsWith('image/')){
+      const r=new FileReader();r.onload=()=>{atts.push({id:uid(),name:f.name,file:f,url:r.result,isDoc:false});drawChips()};r.readAsDataURL(f);
+    }else{
+      const r=new FileReader();r.onload=()=>{atts.push({id:uid(),name:f.name,file:f,text:String(r.result||'').slice(0,12000),isDoc:true});drawChips()};r.readAsText(f);
+    }
+  });
+}
+function drawChips(){const el=$('chips');if(!el)return;
+  el.innerHTML=atts.map(a=>a.isDoc
+    ?`<span class="chip">📄 ${esc(a.name.slice(0,20))}<button data-id="${a.id}">✕</button></span>`
+    :`<span class="chip"><img src="${a.url}" alt=""> ${esc(a.name.slice(0,18))}<button data-id="${a.id}">✕</button></span>`
+  ).join('');
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{atts=atts.filter(a=>a.id!==b.dataset.id);drawChips()});
+}
+const fmtTime=t=>t?new Date(t).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'';
+const MSGBIN={};
+const bubble=m=>{
+  const me_=m.role==='user';
+  const av=me_?(esc(me?.pseudo?.[0]||'🙂').toUpperCase()):'👑';
+  const copyId=uid();MSGBIN[copyId]=m.text||'';
+  const copyBtn=(!me_&&m.text)?`<button class="copyMsg" data-copy="${copyId}">📋 Copier</button>`:'';
+  return `<div class="msgrow ${me_?'me':'ai'}"><div class="avatar">${av}</div>
+    <div class="msgcol ${me_?'me':'ai'}">
+      <div class="bubble ${me_?'me':'ai'}">${m.imgs?.length?`<div class="att">${m.imgs.map(u=>`<img src="${u}" alt="">`).join('')}</div>`:''}${m.docs?.length?`<div class="row" style="margin-bottom:8px">${m.docs.map(d=>`<span class="badge">📄 ${esc(d.name)}</span>`).join('')}</div>`:''}${fmt(m.text)}</div>
+      <div class="msgmeta">${m.time?`<span>${fmtTime(m.time)}</span>`:''}${copyBtn}</div>
+    </div></div>`;
+};
+function cleanSvg(c){c=c.slice(c.indexOf('<svg'));return c.replace(/<script[\s\S]*?<\/script>/gi,'').replace(/on\w+\s*=\s*"[^"]*"/gi,'')}
+function fmt(t){
+  const svgs=[],htmls=[];
+  let x=String(t??'')
+    .replace(/```(?:svg|xml)?\s*(<svg[\s\S]*?<\/svg>)\s*```/gi,(_,c)=>{svgs.push(cleanSvg(c));return '\u0000S'+(svgs.length-1)+'\u0000'})
+    .replace(/(^|\n)\s*(<svg[\s\S]*?<\/svg>)/gi,(_,a,c)=>{svgs.push(cleanSvg(c));return a+'\u0000S'+(svgs.length-1)+'\u0000'})
+    .replace(/```html\s*([\s\S]*?)```/gi,(_,c)=>{htmls.push(c.trim());return '\u0000H'+(htmls.length-1)+'\u0000'});
+  x=esc(x)
+    .replace(/```([\s\S]*?)```/g,(_,c)=>`<pre>${c.trim()}</pre>`)
+    .replace(/`([^`\n]+)`/g,'<code>$1</code>')
+    .replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>')
+    .replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener" style="color:var(--cyan)">$1</a>');
+  x=x.replace(/\u0000S(\d+)\u0000/g,(_,i)=>{const id=uid();SVGBIN[id]=svgs[i];
+      return `<div class="artbox" style="margin:8px 0">${svgs[i]}</div><button class="ghost dlsvg" data-svg="${id}">⬇️ Télécharger l'image</button>`})
+   .replace(/\u0000H(\d+)\u0000/g,(_,i)=>{const id=uid();SVGBIN[id]=htmls[i];
+      return `<iframe class="preview" style="height:320px;margin:8px 0" srcdoc="${esc(htmls[i])}" sandbox="allow-scripts"></iframe><button class="ghost dlhtml" data-svg="${id}">⬇️ Télécharger le site</button>`});
+  return x;
+}
+const SVGBIN={};
+document.addEventListener('click',e=>{
+  const s=e.target.closest('.dlsvg'),h=e.target.closest('.dlhtml'),cp=e.target.closest('.copyMsg');
+  if(s)saveFile('image-princesse.svg',SVGBIN[s.dataset.svg],'image/svg+xml');
+  if(h)saveFile('site-princesse.html',SVGBIN[h.dataset.svg],'text/html');
+  if(cp){navigator.clipboard?.writeText(MSGBIN[cp.dataset.copy]||'');const t=cp.textContent;cp.textContent='✅ Copié';setTimeout(()=>cp.textContent=t,1300)}
+});
+function scrollChat(){const w=document.querySelector('.chat-wrap');if(w){w.scrollTop=w.scrollHeight;$('scrollBtn')?.classList.remove('show')}}
+
+function lockScreen(p){
+  const has=keys().filter(k=>k.userId===key()).length;
+  p.innerHTML=header('Discussion','Accès protégé par clé Openi.ia')+`<div class="section"><div class="card lock spark">
+    <div style="font-size:52px">🔒</div>
+    <h2 style="margin:8px 0">Entre ta clé <span class="gr">Openi.ia</span></h2>
+    <p class="small" style="line-height:1.6">L'IA est verrouillée. ${has?'Colle une de tes clés ci-dessous.':'Tu n\'as pas encore de clé : va dans l\'onglet Openi.ia pour en générer une.'}</p>
+    <input id="kin" class="field" placeholder="OPENI-XXXX-XXXX-XXXX-XXXX" style="text-align:center;font-family:ui-monospace,monospace;letter-spacing:1.5px">
+    <div id="kmsg" class="msg"></div>
+    <div class="row" style="justify-content:center">
+      <button id="kgo" class="mainbtn">🔓 Débloquer l'IA</button>
+      <button id="ktab" class="ghost">🔑 Générer une clé</button></div></div></div>`;
+  $('ktab').onclick=()=>{currentPage='openia';render()};
+  $('kgo').onclick=()=>{ if(activate($('kin').value)){render()} else $('kmsg').textContent='Clé invalide. Génère-la dans l\'onglet Openi.ia.' };
+  $('kin').onkeydown=e=>{if(e.key==='Enter')$('kgo').click()};
+}
+
+const INSTR=`Tu es IA Princesse 👑, l'assistante de l'application Openi.ia. Ton créateur est Tissou : si on te demande qui t'a créée, qui est ton créateur ou qui t'a faite, tu réponds que c'est Tissou. Tu en parles avec fierté et sans inventer d'autres détails sur lui.
+Tu réponds en français (sauf si on te demande une autre langue), de façon chaleureuse, claire et directe.
+Tu aides sur l'école, les maths, les sciences, l'histoire, l'informatique, le code, les jeux vidéo (dont Roblox et Roblox Studio en Lua), l'écriture, les idées et la vie de tous les jours.
+Tu peux voir les images que l'utilisateur t'envoie. Tu peux aussi lire le contenu de fichiers texte ou de code qu'il te joint (repérables dans la conversation avec "--- Fichier joint : nom ---") : analyse-les, résume-les, corrige-les ou utilise-les selon ce qu'il demande.
+Tu as maintenant une mémoire longue : au fil d'une conversation qui s'allonge, un résumé de ce qui a été dit plus tôt t'est fourni ("Résumé de ce qui a déjà été dit...") en plus des derniers messages, pour que tu ne perdes pas le fil.
+Quand l'utilisateur colle un lien internet dans son message, le contenu texte de cette page t'est parfois fourni automatiquement (repérable avec "--- Contenu lu sur la page web ---") : appuie-toi dessus pour répondre avec des informations fraîches et précises. Si ce contenu n'est pas fourni (page non accessible), dis-le et demande de coller le texte utile.
+Tu sais DESSINER : quand on te demande une image, un dessin, un logo ou une illustration, réponds avec une illustration SVG complète dans un bloc \`\`\`svg ... \`\`\` (un seul <svg viewBox="0 0 400 400">, formes et dégradés, aucun script, aucune image externe), avec juste une petite phrase avant. L'app l'affiche comme une vraie image téléchargeable.
+Tu sais aussi faire des SITES : quand on te demande un site ou une page web, réponds avec un fichier HTML complet dans un bloc \`\`\`html ... \`\`\` — l'app en montre l'aperçu.
+Si on te demande un JEU complet et jouable, dis-lui d'aller dans l'onglet 🕹️ Créer un jeu, qui est fait pour ça et génère un vrai jeu en 3D (Three.js) avec boucle de jeu, score et game over. Tu peux quand même donner un petit jeu simple directement dans le chat avec un bloc \`\`\`html si on insiste.
+Pour Roblox Studio, donne du Lua prêt à coller dans un bloc de code.
+Tu ne sais pas fabriquer de vrai fichier vidéo (.mp4) toi-même. Si on te demande de « créer une vidéo », dis-le clairement puis aide quand même concrètement : propose un petit script ou storyboard (scène par scène) adapté à la demande, et donne 3 à 5 vrais bons outils simples et gratuits pour la monter, avec pour chacun un lien officiel cliquable (par exemple CapCut https://www.capcut.com , Canva https://www.canva.com/video-editor/ , InShot https://inshot.com , DaVinci Resolve https://www.blackmagicdesign.com/products/davinciresolve , ou l'éditeur intégré de YouTube Studio https://studio.youtube.com ). Choisis les outils les plus adaptés à ce que demande l'utilisateur (montage rapide au téléphone, animation, effets, capture de gameplay, etc.) plutôt que de tous les citer à chaque fois, et ne donne jamais de lien inventé.
+Tu vois bien les images envoyées : décris précisément ce que tu observes avant de répondre à la demande liée à l'image.
+Dans les onglets 🌐 Créer un site, 🎨 Créer une image et 🕹️ Créer un jeu, une petite conversation apparaît sous le résultat pour continuer et faire des mises à jour (« rends la couronne plus grande », « ajoute un niveau 2 », « ajoute une page contact »…) sans tout redemander depuis le début : rappelle ça si on te demande comment modifier un site, une image ou un jeu déjà créé.
+N'invente jamais un accès à ses fichiers, ses comptes ou ses applications.`;
+
+/* ---------- mémoire longue (résumé glissant) + lecture web ---------- */
+const MSG_WINDOW=60,SUMMARY_EVERY=16;
+async function maybeSummarize(c,fn){
+  if(c.messages.length<SUMMARY_EVERY)return;
+  const last=c.summarizedAt||0;
+  if(c.messages.length-last<SUMMARY_EVERY)return;
+  const toSummarize=c.messages.slice(0,c.messages.length-14);
+  if(!toSummarize.length)return;
+  try{
+    const convText=toSummarize.map(m=>(m.role==='user'?'Utilisateur':'IA')+': '+(m.text||'').slice(0,600)).join('\n').slice(0,16000);
+    const r=await fn(`Résume cette conversation de façon concise mais complète (informations importantes, préférences exprimées, décisions prises, contexte à retenir), en 10 à 15 lignes maximum, en français, à la 3e personne. Réponds UNIQUEMENT avec le résumé, sans commentaire ni balises.
+
+${c.summary?('Résumé précédent à mettre à jour :\n'+c.summary+'\n\nNouveaux échanges à intégrer :\n'):'Conversation à résumer :\n'}${convText}`,{modelTier:tier(),cache:false});
+    const s=(r.text||'').trim();
+    if(s){c.summary=s;c.summarizedAt=c.messages.length;save();}
+  }catch(e){/* pas grave, on retentera au prochain message */}
+}
+async function fetchWebContext(text){
+  const urls=[...new Set((text||'').match(/https?:\/\/[^\s<>"')]+/g)||[])].slice(0,PROMODE()?2:1);
+  if(!urls.length)return null;
+  const st=$('st');if(st)st.innerHTML='🌍 Lecture de la page web…';
+  const parts=[];
+  for(const url of urls){
+    try{
+      const ctl2=new AbortController();const t=setTimeout(()=>ctl2.abort(),9000);
+      const r=await fetch('https://r.jina.ai/'+url,{signal:ctl2.signal});
+      clearTimeout(t);
+      if(!r.ok)continue;
+      const txt=(await r.text()).slice(0,5000).trim();
+      if(txt)parts.push({url,text:txt});
+    }catch(e){}
+  }
+  if(!parts.length)return null;
+  return {url:parts.map(p=>p.url).join(' + '),text:parts.map(p=>(parts.length>1?`[${p.url}]\n`:'')+p.text).join('\n\n')};
+}
+async function send(){
+  if(busy)return;
+  const i=$('input'),text=i.value.trim();const sending=atts.slice();
+  if(!text&&!sending.length)return;
+  const c=store.conversations.find(x=>x.id===currentConv);if(!c)return;
+  if(!quota('chat',20)){$('st').textContent='⚠️ Crédits de discussion épuisés pour aujourd’hui. Ils reviennent demain.';return}
+  const fn=await engine();
+  if(!fn){$('st').textContent='⚠️ Le moteur IA n\'est pas disponible dans cette vue.';return}
+  busy=true;i.value='';i.style.height='46px';atts=[];drawChips();
+  const imgAtts=sending.filter(a=>!a.isDoc),docAtts=sending.filter(a=>a.isDoc);
+  const msg={role:'user',text:text||(imgAtts.length?'(image)':'(fichier joint)'),imgs:imgAtts.map(a=>a.url),
+    docs:docAtts.map(a=>({name:a.name,text:a.text})),time:Date.now()};
+  c.messages.push(msg);
+  if(c.messages.length===1)c.title=(text||(imgAtts.length?'Image':'Fichier')).slice(0,42);
+  c.updated=Date.now();save();
+  const chat=$('chat');
+  if(chat.querySelector('.empty'))chat.innerHTML='';
+  chat.insertAdjacentHTML('beforeend',bubble(msg));
+  const outRow=document.createElement('div');outRow.className='msgrow ai';
+  outRow.innerHTML=`<div class="avatar">👑</div><div class="msgcol ai"><div class="bubble ai"><span class="typing"><span></span><span></span><span></span></span></div><div class="msgmeta"></div></div>`;
+  chat.appendChild(outRow);const out=outRow.querySelector('.bubble');scrollChat();
+  $('send').disabled=true;$('st').innerHTML='👑 IA Princesse réfléchit…';
+
+  const webCtx=await fetchWebContext(text);
+
+  const input=[{role:'user',content:INSTR_NOW()+(c.summary?`\n\nRésumé de ce qui a déjà été dit plus tôt dans cette conversation (mémoire longue) :\n${c.summary}`:'')+'\n\n(Réponds simplement "Prête 👑" à ce message d\'installation.)'},
+               {role:'assistant',content:'Prête 👑'},
+               ...c.messages.slice(-MSG_WINDOW).map(m=>({role:m.role==='user'?'user':'assistant',content:m.text
+                 +(m.imgs?.length?' [image envoyée]':'')
+                 +(m.docs?.length?'\n\n'+m.docs.map(d=>`--- Fichier joint : ${d.name} ---\n${d.text}`).join('\n\n'):'')
+                 +(m===msg&&webCtx?`\n\n--- Contenu lu sur la page web (${webCtx.url}) ---\n${webCtx.text}`:'')}))];
+  let full='';ctl=new AbortController();
+  const opts={signal:ctl.signal,cache:false,modelTier:tier(),onText:({text})=>{full=text;out.innerHTML=fmt(text);scrollChat()}};
+  if(imgAtts.length){const lim=await fn.limits?.().catch(()=>null);
+    if(lim?.images)opts.images=imgAtts.slice(0,lim.images.maxCount).map(a=>a.file);
+    else $('st').textContent='⚠️ Les images ne sont pas acceptées dans cette vue.'}
+  if(!$('st').textContent.startsWith('⚠️'))$('st').innerHTML='👑 IA Princesse réfléchit…';
+  try{ let r;try{ r=await fn(input,opts) }catch(e1){ if(['cancelled','not_granted','rate_limited','prompt_too_large'].includes(e1?.code)||opts.signal?.aborted)throw e1;
+      $('st').textContent='🔁 Nouvelle tentative…';await new Promise(z=>setTimeout(z,900));r=await fn(input,opts) }
+    full=r.text||full }
+  catch(e){ full=e?.text||'';
+    const map={not_granted:'Accès au moteur refusé. Recharge et accepte pour utiliser l\'IA.',
+      rate_limited:'Trop de messages d\'un coup, attends quelques secondes.',cancelled:'Réponse arrêtée.',
+      prompt_too_large:'La conversation est trop longue, ouvre une nouvelle discussion.'};
+    $('st').textContent='⚠️ '+(map[e?.code]||e?.message||'Erreur du moteur.');
+    if(!full)out.innerHTML=fmt('Je n\'ai pas pu répondre cette fois-ci. Réessaie dans un instant.') }
+  if(full){
+    const aiMsg={role:'assistant',text:full,time:Date.now()};
+    out.innerHTML=fmt(full);
+    const copyId=uid();MSGBIN[copyId]=full;
+    outRow.querySelector('.msgmeta').innerHTML=`<span>${fmtTime(aiMsg.time)}</span><button class="copyMsg" data-copy="${copyId}">📋 Copier</button>`;
+    c.messages.push(aiMsg);c.updated=Date.now();save();
+    maybeSummarize(c,fn);updateProfile(c,fn);
+  }
+  $('send').disabled=false;busy=false;if($('st').textContent.startsWith('👑'))$('st').textContent='';
+  scrollChat();$('input')?.focus();
+}
+
+/* ---------- autres pages ---------- */
+function pageHistory(p){const cs=myConvs();
+  p.innerHTML=header('Conversations','Tes discussions sont gardées sur cet appareil.')+`<div class="section">
+    ${cs.length?cs.map(c=>`<div class="item"><b>${esc(c.title)}</b>
+      <div class="small" style="margin:5px 0 10px">${new Date(c.updated).toLocaleString('fr-FR')} · ${c.messages.length} message(s)</div>
+      <div class="row"><button class="mainbtn open" data-id="${c.id}">Ouvrir</button>
+      <button class="ghost dangerbtn del" data-id="${c.id}">Supprimer</button></div></div>`).join('')
+      :'<div class="card" style="text-align:center;color:var(--muted)">Aucune conversation.</div>'}</div>`;
+  p.querySelectorAll('.open').forEach(b=>b.onclick=()=>{currentConv=b.dataset.id;currentPage='chat';render()});
+  p.querySelectorAll('.del').forEach(b=>b.onclick=()=>{store.conversations=store.conversations.filter(x=>x.id!==b.dataset.id);
+    if(currentConv===b.dataset.id)currentConv=null;save();render()});
+}
+async function saveFile(name,data,type){
+  try{const d=await window.claude?.use?.('downloads'); if(d){await d.save({filename:name,data});return true}}catch(e){}
+  try{const u=URL.createObjectURL(new Blob([data],{type:type||'text/plain'}));
+    const a=document.createElement('a');a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);return true}catch(e){return false}
+}
+function needKey(p,what){
+  p.innerHTML=header(what,'Clé Openi.ia requise')+`<div class="section"><div class="card lock">
+    <div style="font-size:46px">🔒</div><h2>Débloque d'abord l'IA</h2>
+    <p class="small">Génère une clé dans l'onglet 🔑 Openi.ia puis entre-la dans la Discussion.</p>
+    <button class="mainbtn" onclick="currentPage='openia';render()">🔑 Aller générer ma clé</button></div></div>`;
+}
+
+/* ---------- page Créer un site ---------- */
+function pageSites(p){
+  if(!unlocked())return needKey(p,'Créer un site');
+  const ss=store.sites.filter(x=>x.userId===key());
+  if(currentSite&&!ss.some(s=>s.id===currentSite.id))currentSite=null;
+  p.innerHTML=header('Créer un site',`L'IA écrit un vrai site complet · qualité active : <b>${siteQuality().badge}</b> · restant aujourd'hui : ${fmtQ(quotaLeft('site',3))}`)+`<div class="section">
+    <div class="card"><b>🌐 Décris ton site</b>
+      <p class="small" style="margin-top:4px">Sites générés en <b>${esc(siteQuality().label)}</b>. ${plan()==='free'?'Passe à un Pass supérieur dans l\'onglet Pass pour des sites bien plus beaux et avancés, gratuitement.':''}</p>
+      <textarea id="sd" class="field" style="height:110px" placeholder="Exemple : un site pour mon serveur Roblox, fond sombre, un bouton rejoindre, une galerie et un formulaire de contact"></textarea>
+      <div class="row" style="margin-top:12px"><button id="go" class="mainbtn">✨ Générer un nouveau site</button>
+      <span id="sst" class="small"></span></div></div>
+    <div class="card"><b>📥 Importer un site existant</b>
+      <p class="small" style="margin-top:4px;line-height:1.6">Colle le code HTML de ton site (ou choisis un fichier .html), dis à l'IA ce qu'elle doit améliorer, et elle te renvoie une version corrigée.</p>
+      <input id="siteFileIn" type="file" accept=".html,.htm,text/html" class="hidden">
+      <div class="row" style="margin:10px 0"><button id="siteFileBtn" class="ghost">📂 Choisir un fichier .html</button><span id="siteFileName" class="small"></span></div>
+      <textarea id="sip" class="field" style="height:90px;font-family:ui-monospace,monospace;font-size:12.5px" placeholder="…ou colle ici le code HTML complet de ton site"></textarea>
+      <textarea id="sii" class="field" style="height:70px;margin-top:8px" placeholder="Ce que l'IA doit améliorer (facultatif) : ex. modernise le design, corrige le responsive, ajoute une section contact"></textarea>
+      <div class="row" style="margin-top:12px"><button id="goImport" class="mainbtn">🚀 Importer et améliorer avec l'IA</button>
+      <span id="sist" class="small"></span></div></div>
+    <div id="res">${currentSite?sitePreviewHTML(currentSite):''}</div>
+    <div class="card"><b>📁 Mes sites (${ss.length})</b><div class="keyring" style="margin-top:10px">
+      ${ss.length?ss.slice().reverse().map(x=>`<div class="item"><b>🌐 ${esc(x.name)}</b>
+        <div class="small">${new Date(x.date).toLocaleString('fr-FR')}</div>
+        <div class="row" style="margin-top:10px"><button class="ghost sopen" data-id="${x.id}">👁️ Voir / Continuer</button>
+        <button class="ghost sdl" data-id="${x.id}">⬇️ Télécharger</button>
+        <button class="ghost dangerbtn sdel" data-id="${x.id}">🗑️</button></div></div>`).join('')
+        :'<div class="small">Aucun site pour le moment.</div>'}</div></div></div>`;
+  $('go').onclick=()=>genSite($('sd').value.trim());
+  $('siteFileBtn').onclick=()=>$('siteFileIn').click();
+  $('siteFileIn').onchange=e=>{const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();r.onload=()=>{$('sip').value=String(r.result||'');$('siteFileName').textContent='✅ '+f.name};r.readAsText(f)};
+  $('goImport').onclick=()=>importSite($('sip').value,$('sii').value.trim());
+  p.querySelectorAll('.sopen').forEach(b=>b.onclick=()=>{currentSite=store.sites.find(x=>x.id===b.dataset.id);render();
+    $('res')?.scrollIntoView({behavior:'smooth'})});
+  p.querySelectorAll('.sdl').forEach(b=>{const x=store.sites.find(x=>x.id===b.dataset.id);
+    b.onclick=()=>saveFile((x.name||'site').replace(/\W+/g,'-').toLowerCase()+'.html',x.html,'text/html')});
+  p.querySelectorAll('.sdel').forEach(b=>b.onclick=()=>{store.sites=store.sites.filter(x=>x.id!==b.dataset.id);
+    if(currentSite?.id===b.dataset.id)currentSite=null;save();render()});
+  wireSiteConv();
+}
+function sitePreviewHTML(x){
+  const conv=x.conv||[];
+  return `<div class="card"><div class="row" style="justify-content:space-between"><b>👁️ ${esc(x.name)}</b><button class="ghost live" data-live="${x.id}" style="font-size:12px;padding:6px 12px">🔴 Tester en plein écran</button></div>
+    <iframe class="preview" style="margin-top:10px" srcdoc="${esc(x.html)}" sandbox="allow-scripts"></iframe>
+    <div style="margin-top:14px"><b>💬 Continuer ce site</b>
+      <div id="siteConv" style="display:flex;flex-direction:column;gap:8px;margin:10px 0">${conv.map(m=>`<div class="bubble ${m.role==='user'?'me':'ai'}" style="max-width:100%">${esc(m.text)}</div>`).join('')}</div>
+      <div class="row"><input id="sci" class="field" style="flex:1;min-width:180px" placeholder="Ex : ajoute une page contact, change les couleurs, agrandis le logo…">
+      <button id="scgo" class="mainbtn">Mettre à jour</button></div></div></div>`;
+}
+function openLive(html){
+  try{const u=URL.createObjectURL(new Blob([html],{type:'text/html'}));window.open(u,'_blank');setTimeout(()=>URL.revokeObjectURL(u),60000)}catch(e){}
+}
+document.addEventListener('click',e=>{
+  const ls=e.target.closest('.live[data-live]');if(!ls)return;
+  const x=store.sites.find(s=>s.id===ls.dataset.live)||store.games.find(g=>g.id===ls.dataset.live);
+  if(x)openLive(x.html);
+});
+function wireSiteConv(){
+  const i=$('sci');if(!i)return;
+  const go=()=>updateSite(i.value.trim());
+  $('scgo').onclick=go;
+  i.onkeydown=e=>{if(e.key==='Enter')go()};
+}
+async function genSite(desc){
+  if(!desc)return;
+  const fn=await engine(); if(!fn)return $('sst').textContent='Moteur indisponible.';
+  if(!quota('site',3))return $('sst').textContent='Limite gratuite atteinte (3/jour). Passe à Plus ⚡ pour l\'illimité.';
+  $('go').disabled=true;$('sst').innerHTML='⏳ L\'IA construit ton site… (30 s environ)';
+  try{
+    const r=await fn(`Tu es développeur web. Écris un site web COMPLET en UN seul fichier HTML (CSS et JS inclus dans le fichier, aucune image externe, aucun lien vers un CDN).
+Il doit être en français et bien responsive. ${siteQuality().prompt}
+Demande de l'utilisateur : ${desc}
+Réponds UNIQUEMENT avec le code HTML, en commençant par <!doctype html>, sans explication et sans balises markdown.`,
+      {modelTier:tier(),cache:false});
+    let html=(r.text||'').replace(/^```[a-z]*\n?|```$/gm,'').trim();
+    if(!/</.test(html))throw new Error('Réponse vide');
+    const site={id:uid(),userId:key(),name:desc.slice(0,40),desc,html,date:Date.now(),
+      conv:[{role:'user',text:desc},{role:'assistant',text:'Site créé ✅ — continue la conversation ci-dessous pour le modifier.'}]};
+    store.sites.push(site);save();currentSite=site;render();
+  }catch(e){ $('sst').textContent='⚠️ '+(e.code==='not_granted'?'Accès au moteur refusé.':(e.message||'Erreur.')) }
+  if($('go'))$('go').disabled=false;
+}
+async function importSite(rawHtml,instruction){
+  const html=(rawHtml||'').trim();
+  if(!html||!/</.test(html))return $('sist').textContent='Colle du code HTML valide ou choisis un fichier .html.';
+  const fn=await engine(); if(!fn)return $('sist').textContent='Moteur indisponible.';
+  if(!quota('site',3))return $('sist').textContent='Limite gratuite atteinte (3/jour). Passe à Plus ⚡ pour l\'illimité.';
+  $('goImport').disabled=true;$('sist').innerHTML='⏳ L\'IA analyse et améliore ton site… (30 s environ)';
+  try{
+    const instr=instruction||'Corrige les éventuels problèmes, modernise le design et assure un bon responsive, en gardant le contenu et les fonctionnalités existantes.';
+    const r=await fn(`Voici le code HTML complet d'un site importé par l'utilisateur :
+${html.slice(0,20000)}
+
+Améliore ce site selon cette demande : ${instr}
+Niveau de qualité à respecter : ${siteQuality().prompt}
+Réponds UNIQUEMENT avec le code HTML complet amélioré (en commençant par <!doctype html>), sans explication et sans balises markdown.`,
+      {modelTier:tier(),cache:false});
+    let out=(r.text||'').replace(/^```[a-z]*\n?|```$/gm,'').trim();
+    if(!/</.test(out))throw new Error('Réponse vide');
+    const site={id:uid(),userId:key(),name:('Site importé '+new Date().toLocaleDateString('fr-FR')).slice(0,40),
+      desc:instr,html:out,date:Date.now(),
+      conv:[{role:'user',text:'Site importé, demande : '+instr},{role:'assistant',text:'Site importé et amélioré ✅ — continue la conversation ci-dessous pour le modifier.'}]};
+    store.sites.push(site);save();currentSite=site;render();
+  }catch(e){ $('sist').textContent='⚠️ '+(e.code==='not_granted'?'Accès au moteur refusé.':(e.message||'Erreur.')) }
+  if($('goImport'))$('goImport').disabled=false;
+}
+async function updateSite(instruction){
+  if(!instruction||!currentSite)return;
+  const fn=await engine(); if(!fn)return;
+  if(!quota('site',3)){const st=$('sst');if(st)st.textContent='Limite gratuite atteinte (3/jour). Passe à Plus ⚡ pour l\'illimité.';return}
+  const i=$('sci');if(i)i.value='';
+  const conv=currentSite.conv=currentSite.conv||[];
+  conv.push({role:'user',text:instruction});save();
+  const box=$('siteConv');if(box)box.insertAdjacentHTML('beforeend',
+    `<div class="bubble me" style="max-width:100%">${esc(instruction)}</div><div class="bubble ai" style="max-width:100%"><span class="typing"><span></span><span></span><span></span></span></div>`);
+  if($('scgo'))$('scgo').disabled=true;
+  try{
+    const r=await fn(`Voici le code HTML complet d'un site web :
+${currentSite.html}
+
+Modifie ce site selon cette demande, en gardant tout ce qui marche déjà si ce n'est pas concerné : ${instruction}
+Niveau de qualité à respecter : ${siteQuality().prompt}
+Réponds UNIQUEMENT avec le code HTML complet mis à jour (en commençant par <!doctype html>), sans explication et sans balises markdown.`,{modelTier:tier(),cache:false});
+    let html=(r.text||'').replace(/^```[a-z]*\n?|```$/gm,'').trim();
+    if(!/</.test(html))throw new Error('Mise à jour ratée, réessaie.');
+    currentSite.html=html;conv.push({role:'assistant',text:'Site mis à jour ✅'});save();render();
+  }catch(e){ conv.push({role:'assistant',text:'⚠️ '+(e.message||'Erreur pendant la mise à jour.')});save();render() }
+}
+
+/* ---------- page Créer un jeu ---------- */
+function pageGames(p){
+  if(!unlocked())return needKey(p,'Créer un jeu');
+  const gs=store.games.filter(x=>x.userId===key());
+  if(currentGame&&!gs.some(g=>g.id===currentGame.id))currentGame=null;
+  p.innerHTML=header('Créer un jeu',`L'IA code un mini-jeu 3D jouable au clavier/souris · restant aujourd'hui : ${fmtQ(quotaLeft('game',2))}`)+`<div class="section">
+    <div class="card"><b>🕹️ Décris ton jeu (généré en 3D)</b>
+      <textarea id="gd" class="field" style="height:110px" placeholder="Exemple : un jeu où une voiture 3D roule sur une route et évite des obstacles, avec un score"></textarea>
+      <div class="row" style="margin-top:12px"><button id="ggo" class="mainbtn">✨ Générer un nouveau jeu</button>
+      <span id="gst" class="small"></span></div></div>
+    <div id="gres">${currentGame?gamePreviewHTML(currentGame):''}</div>
+    <div class="card"><b>📁 Mes jeux (${gs.length})</b><div class="keyring" style="margin-top:10px">
+      ${gs.length?gs.slice().reverse().map(x=>`<div class="item"><b>🕹️ ${esc(x.name)}</b>
+        <div class="small">${new Date(x.date).toLocaleString('fr-FR')}</div>
+        <div class="row" style="margin-top:10px"><button class="ghost gopen" data-id="${x.id}">▶️ Jouer / Continuer</button>
+        <button class="ghost gdl" data-id="${x.id}">⬇️ Télécharger</button>
+        <button class="ghost dangerbtn gdel" data-id="${x.id}">🗑️</button></div></div>`).join('')
+        :'<div class="small">Aucun jeu pour le moment.</div>'}</div></div></div>`;
+  $('ggo').onclick=()=>genGame($('gd').value.trim());
+  p.querySelectorAll('.gopen').forEach(b=>b.onclick=()=>{currentGame=store.games.find(x=>x.id===b.dataset.id);render();
+    $('gres')?.scrollIntoView({behavior:'smooth'})});
+  p.querySelectorAll('.gdl').forEach(b=>{const x=store.games.find(x=>x.id===b.dataset.id);
+    b.onclick=()=>saveFile((x.name||'jeu').replace(/\W+/g,'-').toLowerCase()+'.html',x.html,'text/html')});
+  p.querySelectorAll('.gdel').forEach(b=>b.onclick=()=>{store.games=store.games.filter(x=>x.id!==b.dataset.id);
+    if(currentGame?.id===b.dataset.id)currentGame=null;save();render()});
+  wireGameConv();
+}
+function gamePreviewHTML(x){
+  const conv=x.conv||[];
+  return `<div class="card"><div class="row" style="justify-content:space-between"><b>▶️ ${esc(x.name)}</b><button class="ghost live" data-live="${x.id}" style="font-size:12px;padding:6px 12px">🔴 Jouer en plein écran</button></div>
+    <iframe class="preview" style="margin-top:10px;height:460px" srcdoc="${esc(x.html)}" sandbox="allow-scripts"></iframe>
+    <div style="margin-top:14px"><b>💬 Continuer ce jeu</b>
+      <div id="gameConv" style="display:flex;flex-direction:column;gap:8px;margin:10px 0">${conv.map(m=>`<div class="bubble ${m.role==='user'?'me':'ai'}" style="max-width:100%">${esc(m.text)}</div>`).join('')}</div>
+      <div class="row"><input id="gci" class="field" style="flex:1;min-width:180px" placeholder="Ex : ajoute un niveau 2, rends le personnage plus rapide…">
+      <button id="gcgo" class="mainbtn">Mettre à jour</button></div></div></div>`;
+}
+function wireGameConv(){
+  const i=$('gci');if(!i)return;
+  const go=()=>updateGame(i.value.trim());
+  $('gcgo').onclick=go;
+  i.onkeydown=e=>{if(e.key==='Enter')go()};
+}
+async function genGame(desc){
+  if(!desc)return;
+  const fn=await engine(); if(!fn)return $('gst').textContent=noEngineMsg();
+  if(!quota('game',2))return $('gst').textContent='Limite gratuite atteinte (2/jour). Passe à Plus ⚡ pour plus de jeux.';
+  $('ggo').disabled=true;$('gst').innerHTML='⏳ L\'IA code ton jeu… (30-60 s)';
+  try{
+    const r=await fn(`Tu es développeur de jeux vidéo 3D. Écris un mini-jeu 3D COMPLET et jouable, en UN seul fichier HTML autonome.
+Contraintes techniques obligatoires :
+- Utilise Three.js chargé UNIQUEMENT via cette balise exacte dans le <head> ou avant ton script : <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>
+- Aucune autre librairie externe, aucune image ni son externe, aucun autre CDN.
+- Le rendu doit être fait avec THREE.WebGLRenderer dans un <canvas> plein écran (resize automatique avec window.addEventListener('resize', ...)).
+- Construis la scène avec de vraies formes 3D (THREE.BoxGeometry, SphereGeometry, CylinderGeometry, PlaneGeometry, etc.), un éclairage (au moins une lumière ambiante + une directionnelle), et une caméra en perspective (THREE.PerspectiveCamera) qui donne une vraie sensation de profondeur/3D (pas une vue plate façon 2D).
+- Une vraie boucle de jeu avec requestAnimationFrame qui anime la scène 3D.
+- Contrôles clavier (flèches/ZQSD/WASD) et/ou souris pour agir dans le monde 3D.
+- Un score affiché en overlay HTML par-dessus le canvas (div positionné en absolute), un état "game over" avec un bouton pour relancer.
+- Doit rester jouable sur mobile si possible (boutons tactiles simples en overlay si utile).
+N'utilise JAMAIS de <canvas> en 2D classique (context 2d) : le jeu doit être un vrai jeu en 3D avec Three.js.
+Demande de l'utilisateur : ${desc}
+Réponds UNIQUEMENT avec le code HTML, en commençant par <!doctype html>, sans explication et sans balises markdown.`,
+      {modelTier:tier(),cache:false});
+    let html=(r.text||'').replace(/^```[a-z]*\n?|```$/gm,'').trim();
+    if(!/</.test(html))throw new Error('Réponse vide');
+    const game={id:uid(),userId:key(),name:desc.slice(0,40),desc,html,date:Date.now(),
+      conv:[{role:'user',text:desc},{role:'assistant',text:'Jeu créé ✅ — continue la conversation ci-dessous pour le modifier.'}]};
+    store.games.push(game);save();currentGame=game;render();
+  }catch(e){ $('gst').textContent='⚠️ '+(e.message||'Erreur.') }
+  if($('ggo'))$('ggo').disabled=false;
+}
+async function updateGame(instruction){
+  if(!instruction||!currentGame)return;
+  const fn=await engine(); if(!fn)return;
+  if(!quota('game',2)){const st=$('gst');if(st)st.textContent='Limite gratuite atteinte (2/jour). Passe à Plus ⚡ pour plus de jeux.';return}
+  const i=$('gci');if(i)i.value='';
+  const conv=currentGame.conv=currentGame.conv||[];
+  conv.push({role:'user',text:instruction});save();
+  const box=$('gameConv');if(box)box.insertAdjacentHTML('beforeend',
+    `<div class="bubble me" style="max-width:100%">${esc(instruction)}</div><div class="bubble ai" style="max-width:100%"><span class="typing"><span></span><span></span><span></span></span></div>`);
+  if($('gcgo'))$('gcgo').disabled=true;
+  try{
+    const r=await fn(`Voici le code HTML complet d'un mini-jeu 3D (Three.js) :
+${currentGame.html}
+
+Modifie ce jeu selon cette demande, en gardant tout ce qui marche déjà si ce n'est pas concerné : ${instruction}
+Garde impérativement un rendu en vraie 3D avec Three.js (THREE.WebGLRenderer, THREE.PerspectiveCamera, formes 3D) chargé via https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js — ne repasse jamais à un canvas 2D classique.
+Réponds UNIQUEMENT avec le code HTML complet mis à jour (en commençant par <!doctype html>), sans explication et sans balises markdown.`,{modelTier:tier(),cache:false});
+    let html=(r.text||'').replace(/^```[a-z]*\n?|```$/gm,'').trim();
+    if(!/</.test(html))throw new Error('Mise à jour ratée, réessaie.');
+    currentGame.html=html;conv.push({role:'assistant',text:'Jeu mis à jour ✅'});save();render();
+  }catch(e){ conv.push({role:'assistant',text:'⚠️ '+(e.message||'Erreur pendant la mise à jour.')});save();render() }
+}
+
+/* ---------- page Créer une image ---------- */
+function pageImages(p){
+  if(!unlocked())return needKey(p,'Créer une image');
+  const as=store.arts.filter(x=>x.userId===key());
+  if(currentArt&&!as.some(a=>a.id===currentArt.id))currentArt=null;
+  p.innerHTML=header('Créer une image',`L'IA dessine ou génère une vraie image · restant aujourd'hui : ${fmtQ(quotaLeft('art',3))}`)+`<div class="section">
+    <div class="card"><b>🎨 Décris ton image</b>
+      <div class="tabs" style="margin:10px 0"><button id="modeSvg" class="${artMode==='svg'?'active':''}" type="button">✏️ Dessin vectoriel</button><button id="modePhoto" class="${artMode==='photo'?'active':''}" type="button">📷 Vraie image (IA)</button></div>
+      <p class="small">${artMode==='photo'?'Génère une vraie image (photo, illustration détaillée) grâce à un moteur de génération d\'image dédié.':'Génère un dessin vectoriel net (logo, illustration simple), modifiable par conversation.'}</p>
+      <textarea id="ad" class="field" style="height:90px" placeholder="Exemple : un logo de princesse cyberpunk avec une couronne néon rose et violette"></textarea>
+      <div class="row" style="margin-top:12px"><button id="ago" class="mainbtn">✨ Générer une nouvelle image</button>
+      <span id="ast" class="small"></span></div>
+      <div id="art" class="artbox" style="margin-top:14px">${currentArt?artRender(currentArt):'L\'image apparaîtra ici.'}</div>
+      <div id="artConvWrap">${currentArt&&currentArt.type!=='photo'?artConvHTML(currentArt):''}</div></div>
+    <div class="card"><b>🖼️ Ma galerie (${as.length})</b>
+      <div class="gal" style="margin-top:10px">${as.slice().reverse().map(x=>`<div><div class="artbox" data-dl="${x.id}">${artRender(x)}</div>
+        <div class="small" style="margin-top:5px">${esc(x.desc.slice(0,40))}</div>
+        <div class="row" style="margin-top:6px">${x.type!=='photo'?`<button class="ghost" data-open="${x.id}" style="font-size:11px;padding:5px 9px">✏️ Continuer</button>`:''}</div></div>`).join('')||'<div class="small">Galerie vide.</div>'}</div>
+      <div class="small" style="margin-top:8px">Astuce : clique sur une image pour la télécharger, ou « Continuer » (dessins vectoriels) pour la modifier par conversation.</div></div></div>`;
+  $('modeSvg').onclick=()=>{artMode='svg';render()};
+  $('modePhoto').onclick=()=>{artMode='photo';render()};
+  $('ago').onclick=()=>genArt($('ad').value.trim());
+  p.querySelectorAll('[data-dl]').forEach(b=>b.onclick=()=>{const x=store.arts.find(a=>a.id===b.dataset.dl);
+    if(!x)return; x.type==='photo'?saveDataUrl('image-'+x.id+'.jpg',x.img):saveFile('image-'+x.id+'.svg',x.svg,'image/svg+xml')});
+  p.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{currentArt=store.arts.find(a=>a.id===b.dataset.open);render();
+    $('artConvWrap')?.scrollIntoView({behavior:'smooth'})});
+  wireArtConv();
+}
+function artRender(x){return x.type==='photo'?`<img src="${x.img}" alt="" style="max-width:100%;border-radius:14px;display:block">`:x.svg}
+async function saveDataUrl(name,dataUrl){
+  try{const blob=await (await fetch(dataUrl)).blob();
+    const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);return true}
+  catch(e){return false}
+}
+function artConvHTML(art){
+  const conv=art.conv||[];
+  return `<div class="card" style="margin-top:12px;background:var(--glass2)"><b>💬 Continuer cette image</b>
+    <div id="artConv" style="display:flex;flex-direction:column;gap:8px;margin:10px 0">${conv.map(m=>`<div class="bubble ${m.role==='user'?'me':'ai'}" style="max-width:100%">${esc(m.text)}</div>`).join('')}</div>
+    <div class="row"><input id="aci" class="field" style="flex:1;min-width:180px" placeholder="Ex : rends la couronne plus grande, change le fond en violet…">
+    <button id="acgo" class="mainbtn">Mettre à jour</button></div></div>`;
+}
+function wireArtConv(){
+  const i=$('aci');if(!i)return;
+  const go=()=>updateArt(i.value.trim());
+  $('acgo').onclick=go;
+  i.onkeydown=e=>{if(e.key==='Enter')go()};
+}
+async function genArt(desc){
+  if(!desc)return;
+  if(artMode==='photo')return genPhotoArt(desc);
+  const fn=await engine(); if(!fn)return $('ast').textContent='Moteur indisponible.';
+  if(!quota('art',3))return $('ast').textContent='Limite gratuite atteinte (3/jour). Passe à Plus ⚡ pour l\'illimité.';
+  $('ago').disabled=true;$('ast').innerHTML='⏳ L\'IA dessine…';$('art').innerHTML='<span class="typing"><span></span><span></span><span></span></span>';
+  try{
+    const r=await fn(`Dessine une illustration en SVG pur, soignée et colorée, qui représente : ${desc}
+Contraintes : un seul élément <svg> avec viewBox="0 0 400 400", pas d'image externe, pas de script, dégradés et formes autorisés, style moderne et net.
+Réponds UNIQUEMENT avec le code SVG, sans explication ni balises markdown.`,{modelTier:tier(),cache:false});
+    let svg=(r.text||'').replace(/^```[a-z]*\n?|```$/gm,'').trim();
+    svg=svg.slice(svg.indexOf('<svg'));
+    if(!svg.startsWith('<svg'))throw new Error('Dessin raté, réessaie.');
+    svg=svg.replace(/<script[\s\S]*?<\/script>/gi,'');
+    const art={id:uid(),userId:key(),desc,svg,type:'svg',date:Date.now(),
+      conv:[{role:'user',text:desc},{role:'assistant',text:'Image créée ✅ — continue la conversation ci-dessous pour la modifier.'}]};
+    store.arts.push(art);save();currentArt=art;render();
+  }catch(e){ $('art').textContent='😔 Raté.'; $('ast').textContent='⚠️ '+(e.message||'Erreur.') }
+  if($('ago'))$('ago').disabled=false;
+}
+async function genPhotoArt(desc){
+  if(!quota('art',3))return $('ast').textContent='Limite gratuite atteinte (3/jour). Passe à Plus ⚡ pour l\'illimité.';
+  $('ago').disabled=true;$('ast').innerHTML='⏳ Génération de l\'image en cours… (15-30 s)';$('art').innerHTML='<span class="typing"><span></span><span></span><span></span></span>';
+  try{
+    const url='https://image.pollinations.ai/prompt/'+encodeURIComponent(desc)+'?width=768&height=768&nologo=true&seed='+Date.now();
+    const ctl2=new AbortController();const t=setTimeout(()=>ctl2.abort(),40000);
+    const r=await fetch(url,{signal:ctl2.signal});clearTimeout(t);
+    if(!r.ok)throw new Error('Le générateur d\'image est indisponible, réessaie dans un instant.');
+    const blob=await r.blob();
+    const img=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(blob)});
+    const art={id:uid(),userId:key(),desc,img,type:'photo',date:Date.now()};
+    store.arts.push(art);save();currentArt=art;render();
+  }catch(e){ $('art').textContent='😔 Raté.'; $('ast').textContent='⚠️ '+(e.message||'Erreur pendant la génération.') }
+  if($('ago'))$('ago').disabled=false;
+}
+async function updateArt(instruction){
+  if(!instruction||!currentArt)return;
+  const fn=await engine(); if(!fn)return;
+  if(!quota('art',3)){const st=$('ast');if(st)st.textContent='Limite gratuite atteinte (3/jour). Passe à Plus ⚡ pour l\'illimité.';return}
+  const i=$('aci');if(i)i.value='';
+  const conv=currentArt.conv=currentArt.conv||[];
+  conv.push({role:'user',text:instruction});save();
+  const box=$('artConv');if(box)box.insertAdjacentHTML('beforeend',
+    `<div class="bubble me" style="max-width:100%">${esc(instruction)}</div><div class="bubble ai" style="max-width:100%"><span class="typing"><span></span><span></span><span></span></span></div>`);
+  if($('acgo'))$('acgo').disabled=true;
+  try{
+    const r=await fn(`Voici le code SVG actuel d'une illustration :
+${currentArt.svg}
+
+Modifie ce SVG selon cette demande, en gardant ce qui marche déjà si ce n'est pas concerné : ${instruction}
+Contraintes : un seul élément <svg> avec viewBox="0 0 400 400", pas d'image externe, pas de script. Réponds UNIQUEMENT avec le code SVG complet mis à jour, sans explication ni balises markdown.`,{modelTier:tier(),cache:false});
+    let svg=(r.text||'').replace(/^```[a-z]*\n?|```$/gm,'').trim();
+    svg=svg.slice(svg.indexOf('<svg'));
+    if(!svg.startsWith('<svg'))throw new Error('Mise à jour ratée, réessaie.');
+    svg=svg.replace(/<script[\s\S]*?<\/script>/gi,'');
+    currentArt.svg=svg;conv.push({role:'assistant',text:'Image mise à jour ✅'});save();render();
+  }catch(e){ conv.push({role:'assistant',text:'⚠️ '+(e.message||'Erreur pendant la mise à jour.')});save();render() }
+}
+
+/* ---------- page Créer une vidéo ---------- */
+function pageVideos(p){
+  if(!unlocked())return needKey(p,'Créer une vidéo');
+  const vs=store.videos.filter(x=>x.userId===key());
+  if(currentVideo&&!vs.some(v=>v.id===currentVideo.id))currentVideo=null;
+  p.innerHTML=header('Créer une vidéo',`L'IA imagine un mini-scénario et assemble une vraie vidéo animée · restant aujourd'hui : ${fmtQ(quotaLeft('video',1))}`)+`<div class="section">
+    <div class="card"><b>🎬 Décris ta vidéo</b>
+      <p class="small" style="margin-top:4px;line-height:1.6">L'IA découpe ta demande en plusieurs scènes, génère une image pour chacune, puis les enchaîne avec un effet de mouvement (zoom) pour créer une vraie vidéo téléchargeable (.webm).</p>
+      <textarea id="vd" class="field" style="height:100px" placeholder="Exemple : une princesse qui explore un château magique au lever du soleil"></textarea>
+      <label class="small" style="display:block;margin-top:10px">Nombre de scènes</label>
+      <select id="vn" class="field" style="width:180px;margin-top:6px">
+        <option value="3">3 scènes (~9 s)</option>
+        <option value="4" selected>4 scènes (~12 s)</option>
+        <option value="5">5 scènes (~15 s)</option>
+        <option value="6">6 scènes (~18 s)</option>
+      </select>
+      <div class="row" style="margin-top:12px"><button id="vgo" class="mainbtn">✨ Générer la vidéo</button>
+      <span id="vst" class="small"></span></div></div>
+    <div id="vres">${currentVideo?videoPreviewHTML(currentVideo):''}</div>
+    <div class="card"><b>📁 Mes vidéos (${vs.length})</b><div class="keyring" style="margin-top:10px">
+      ${vs.length?vs.slice().reverse().map(x=>`<div class="item"><b>🎬 ${esc(x.name)}</b>
+        <div class="small">${new Date(x.date).toLocaleString('fr-FR')} · ${x.scenes.length} scènes</div>
+        <div class="row" style="margin-top:10px"><button class="ghost vopen" data-id="${x.id}">👁️ Voir / Télécharger</button>
+        <button class="ghost dangerbtn vdel" data-id="${x.id}">🗑️</button></div></div>`).join('')
+        :'<div class="small">Aucune vidéo pour le moment.</div>'}</div></div></div>`;
+  $('vgo').onclick=()=>genVideo($('vd').value.trim(),parseInt($('vn').value,10));
+  p.querySelectorAll('.vopen').forEach(b=>b.onclick=()=>{currentVideo=store.videos.find(x=>x.id===b.dataset.id);render();
+    $('vres')?.scrollIntoView({behavior:'smooth'})});
+  p.querySelectorAll('.vdel').forEach(b=>b.onclick=()=>{store.videos=store.videos.filter(x=>x.id!==b.dataset.id);
+    if(currentVideo?.id===b.dataset.id)currentVideo=null;save();render()});
+  if(currentVideo)wireVideoPlayer();
+}
+function videoPreviewHTML(x){
+  return `<div class="card"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px"><b>👁️ ${esc(x.name)}</b>
+    <button class="ghost" id="vdl" style="font-size:12px;padding:6px 12px">⬇️ Télécharger en .webm</button></div>
+    <div id="vplayer" class="artbox" style="margin-top:10px;position:relative;overflow:hidden;border-radius:14px;aspect-ratio:1/1;max-width:420px;background:#0a0b14">
+      ${x.scenes.map((s,i)=>`<img src="${s.img}" data-i="${i}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:${i===0?1:0};transform:scale(1);transition:opacity .8s ease">`).join('')}
+    </div>
+    <div id="vdlst" class="small" style="margin-top:8px"></div></div>`;
+}
+function wireVideoPlayer(){
+  if(videoTimer){clearInterval(videoTimer);videoTimer=null}
+  const box=$('vplayer');if(!box||!currentVideo)return;
+  const imgs=[...box.querySelectorAll('img')];if(!imgs.length)return;
+  let idx=0;
+  imgs.forEach((im,i)=>{im.style.transition='opacity .8s ease, transform 3.2s ease-out';if(i===0)requestAnimationFrame(()=>im.style.transform='scale(1.12)')});
+  videoTimer=setInterval(()=>{
+    imgs[idx].style.opacity='0';
+    idx=(idx+1)%imgs.length;
+    imgs[idx].style.transform='scale(1)';
+    imgs[idx].style.opacity='1';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{if(imgs[idx])imgs[idx].style.transform='scale(1.12)'}));
+  },3000);
+  const dl=$('vdl');if(dl)dl.onclick=()=>exportVideo(currentVideo);
+}
+async function genVideo(desc,n){
+  if(!desc)return;
+  n=Math.min(6,Math.max(3,n||4));
+  const fn=await engine(); if(!fn)return $('vst').textContent='Moteur indisponible.';
+  if(!quota('video',1))return $('vst').textContent='Limite gratuite atteinte (1/jour). Passe à Plus ⚡ pour plus de vidéos.';
+  $('vgo').disabled=true;$('vst').innerHTML='⏳ L\'IA écrit le scénario…';$('vres').innerHTML='<div class="card"><span class="typing"><span></span><span></span><span></span></span></div>';
+  try{
+    const r=await fn(`Tu découpes une courte vidéo en ${n} scènes visuelles progressives, comme un storyboard.
+Sujet demandé par l'utilisateur : ${desc}
+Réponds avec EXACTEMENT ${n} lignes, une par scène, au format strict :
+SCENE: <description visuelle détaillée en anglais, concise, style cinématographique>
+Aucun autre texte, aucune numérotation, aucune balise markdown.`,{modelTier:tier(),cache:false});
+    let lines=[...(r.text||'').matchAll(/SCENE:\s*(.+)/g)].map(m=>m[1].trim()).filter(Boolean).slice(0,n);
+    while(lines.length<n)lines.push((lines[lines.length-1]||desc)+', continued, different angle');
+    const scenes=[];
+    for(let i=0;i<lines.length;i++){
+      $('vst').innerHTML=`⏳ Génération de la scène ${i+1}/${n}…`;
+      const url='https://image.pollinations.ai/prompt/'+encodeURIComponent(lines[i])+'?width=768&height=768&nologo=true&seed='+(Date.now()+i);
+      const ctl2=new AbortController();const t=setTimeout(()=>ctl2.abort(),40000);
+      const resp=await fetch(url,{signal:ctl2.signal});clearTimeout(t);
+      if(!resp.ok)throw new Error('Le générateur d\'image est indisponible, réessaie dans un instant.');
+      const blob=await resp.blob();
+      const img=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(blob)});
+      scenes.push({prompt:lines[i],img});
+    }
+    const video={id:uid(),userId:key(),name:desc.slice(0,40),desc,scenes,date:Date.now()};
+    store.videos.push(video);save();currentVideo=video;render();
+  }catch(e){ $('vres').innerHTML=''; $('vst').textContent='⚠️ '+(e?.code==='not_granted'?'Accès au moteur refusé.':(e?.message||'Erreur pendant la génération.')) }
+  if($('vgo'))$('vgo').disabled=false;
+}
+async function exportVideo(video){
+  const st=$('vdlst');if(st)st.textContent='⏳ Fabrication du fichier vidéo…';
+  try{
+    const imgs=await Promise.all(video.scenes.map(s=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=s.img})));
+    const size=720,fps=30,secPerScene=3;
+    const canvas=document.createElement('canvas');canvas.width=size;canvas.height=size;
+    const cx=canvas.getContext('2d');
+    const stream=canvas.captureStream(fps);
+    const mime=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m))||'video/webm';
+    const rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:3500000});
+    const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+    const done=new Promise(res=>rec.onstop=res);
+    rec.start();
+    const totalFrames=imgs.length*secPerScene*fps;
+    for(let f=0;f<totalFrames;f++){
+      const sceneIdx=Math.min(imgs.length-1,Math.floor(f/(secPerScene*fps)));
+      const localT=(f%(secPerScene*fps))/(secPerScene*fps);
+      const zoom=1+0.14*localT;
+      const im=imgs[sceneIdx];
+      const iw=im.width*zoom,ih=im.height*zoom;
+      cx.fillStyle='#0a0b14';cx.fillRect(0,0,size,size);
+      cx.drawImage(im,(size-iw)/2,(size-ih)/2,iw,ih);
+      await new Promise(r=>setTimeout(r,1000/fps));
+    }
+    rec.stop();await done;
+    const blob=new Blob(chunks,{type:'video/webm'});
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');
+    a.href=url;a.download=(video.name||'video').replace(/\W+/g,'-').toLowerCase()+'.webm';a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+    if(st)st.textContent='✅ Vidéo téléchargée.';
+  }catch(e){ if(st)st.textContent='⚠️ Impossible de fabriquer le fichier vidéo sur ce navigateur ('+(e?.message||'erreur')+').' }
+}
+
+/* ---------- page Connexions ---------- */
+const APPS=[
+  {id:'discord',ico:'💬',name:'Discord',desc:'Ton serveur et tes salons'},
+  {id:'yt',ico:'▶️',name:'YouTube',desc:'Ta chaîne et tes vidéos'},
+  {id:'spotify',ico:'🎵',name:'Spotify',desc:'Tes playlists'},
+  {id:'insta',ico:'📸',name:'Instagram',desc:'Tes posts'}
+];
+const connState=()=>LS('openi_conn_'+key(),{});
+const setConn=(k,v)=>{const c=connState();c[k]=v;SET('openi_conn_'+key(),c)};
+const tpl=id=>document.getElementById(id).textContent;
+
+function pageConnect(p){
+  const c=connState();
+  p.innerHTML=header('Connexions','Brancher IA Princesse sur tes comptes et sur Roblox Studio.')+`<div class="section">
+
+    <div class="card"><div class="row" style="justify-content:space-between">
+      <b>🔵 Compte Google</b><span class="badge ${c.google?'ok':''}">${c.google?'Serveur configuré':'Non connecté'}</span></div>
+      <p class="small" style="line-height:1.6">Google n'autorise une connexion que par OAuth, depuis un serveur à toi. Openi.ia te donne le serveur tout prêt : tu le lances chez toi, tu cliques « Se connecter avec Google », Google affiche sa page d'autorisation, et l'IA peut lire tes mails, ton Drive et ton agenda.</p>
+      <div class="row"><button id="gdl" class="mainbtn">⬇️ Télécharger le serveur Openi.ia</button>
+        <button id="gsteps" class="ghost">📋 Voir les 5 étapes</button>
+        <button id="gopen" class="ghost">🔗 Ouvrir la page d'autorisation Google</button></div>
+      <div id="gzone"></div></div>
+
+    <div class="card"><div class="row" style="justify-content:space-between">
+      <b>🎮 Roblox Studio</b><span class="badge ${c.roblox?'ok':''}">${c.roblox?'Plugin installé':'Non connecté'}</span></div>
+      <p class="small" style="line-height:1.6">Voici la vraie façon de connecter l'IA à Studio : un <b>plugin</b>. Tu l'installes, et au premier clic Studio affiche lui-même la fenêtre d'autorisation pour laisser le plugin parler à Openi.ia. Ensuite tu tapes ta demande dans Studio et l'IA crée le script directement dans ton jeu.</p>
+      <div class="row"><button id="rdl" class="mainbtn">⬇️ Télécharger le plugin Studio (.lua)</button>
+        <button id="rsteps" class="ghost">📋 Voir les étapes</button>
+        <button id="rok" class="ghost">✅ C'est installé</button></div>
+      <div id="rzone"></div></div>
+
+    <div class="card"><b>🔗 Autres applications</b><div id="connList"></div>
+      <p class="small" style="margin-top:10px">Ces applications ont besoin du même type de serveur que Google. Dis-le-moi dans la Discussion et l'IA t'écrit le code.</p></div>
+  </div>`;
+
+  $('gdl').onclick=()=>{saveFile('openi_server.js',tpl('tpl-server'),'text/javascript');setConn('google',true);};
+  $('gopen').onclick=()=>{setConn('google',true);window.open('http://localhost:8787/auth/google','_blank');
+    $('gzone').innerHTML=`<div class="item" style="margin-top:12px">Si rien ne s'ouvre, c'est que ton serveur Openi.ia n'est pas encore lancé : télécharge-le, puis dans un terminal fais <code>node openi_server.js</code>.</div>`};
+  $('gsteps').onclick=()=>$('gzone').innerHTML=`<div class="item" style="margin-top:12px;line-height:1.9">
+    <b>1.</b> Va sur console.cloud.google.com → crée un projet.<br>
+    <b>2.</b> « Identifiants » → Créer un ID client OAuth → Application Web.<br>
+    <b>3.</b> URI de redirection : <code>http://localhost:8787/auth/google/callback</code><br>
+    <b>4.</b> Colle ton Client ID et ton Secret dans <code>openi_server.js</code>, puis <code>npm i express cors node-fetch@2 googleapis</code> et <code>node openi_server.js</code>.<br>
+    <b>5.</b> Reviens ici et clique « Ouvrir la page d'autorisation Google ».</div>`;
+
+  $('rdl').onclick=()=>saveFile('IA_Princesse_Plugin.lua',tpl('tpl-roblox'),'text/plain');
+  $('rok').onclick=()=>{setConn('roblox',true);render()};
+  $('rsteps').onclick=()=>$('rzone').innerHTML=`<div class="item" style="margin-top:12px;line-height:1.9">
+    <b>1.</b> Télécharge le plugin ci-dessus.<br>
+    <b>2.</b> Dans Studio : clic droit sur l'onglet Plugins → « Dossier des plugins » → colle le fichier dedans.<br>
+    <b>3.</b> Game Settings → Security → <b>Allow HTTP Requests</b> sur ON.<br>
+    <b>4.</b> Redémarre Studio, clique sur le bouton « IA Princesse ». Studio affiche sa fenêtre d'autorisation → <b>Accepte</b>.<br>
+    <b>5.</b> Lance <code>node openi_server.js</code> (le même que pour Google), colle ta clé OPENI dans le plugin, et demande ton script.</div>`;
+
+  const l=$('connList');
+  l.innerHTML=APPS.map(a=>`<div class="conn"><div class="ico">${a.ico}</div>
+    <div class="info"><b>${a.name}</b><span>${a.desc}</span></div>
+    <button class="ghost" data-app="${a.id}">Serveur requis</button></div>`).join('');
+  l.querySelectorAll('[data-app]').forEach(b=>b.onclick=()=>{currentPage='chat';render();
+    setTimeout(()=>{const i=$('input');if(i){i.value='Explique-moi comment connecter '+b.closest('.conn').querySelector('b').textContent+' à Openi.ia';i.focus()}},120)});
+}
+
+function pagePlans(p){
+  const cur=plan();
+  p.innerHTML=header('Pass & crédits',`Offre actuelle : <b>${planName()}</b>`)+`<div class="section">
+    <div class="card"><b>🎁 V13.2 — tout est gratuit</b><p class="small" style="line-height:1.6">Aucun paiement, aucune carte bancaire et aucun argent n’est collecté par cette page. Les Pass servent seulement à débloquer davantage de crédits quotidiens <b>et une meilleure qualité de sites générés</b>.</p></div>
+    <div class="grid3">
+      <div class="plan"><h3>Gratuit</h3><div class="price">0 €</div><ul><li>${CREDIT_LIMITS.free.chat} messages / jour</li><li>${CREDIT_LIMITS.free.site} sites / jour</li><li>${CREDIT_LIMITS.free.art} images / jour</li><li>🌐 Sites version standard</li></ul><button class="ghost full" data-p="free">${cur==='free'?'Actuel ✔':'Activer gratuitement'}</button></div>
+      <div class="plan plus"><h3>Pass Plus ⚡</h3><div class="price">0 €</div><ul><li>${CREDIT_LIMITS.plus.chat} messages / jour</li><li>${CREDIT_LIMITS.plus.site} sites / jour</li><li>${CREDIT_LIMITS.plus.art} images / jour</li><li>🌐 Sites version avancée</li></ul><button class="mainbtn full" data-p="plus">${cur==='plus'?'Actuel ✔':'Activer gratuitement'}</button></div>
+      <div class="plan ultra"><h3>Pass Ultra 👑</h3><div class="price">0 €</div><ul><li>Messages illimités ✨</li><li>Sites illimités ✨</li><li>Images illimitées ✨</li><li>Jeux illimités ✨</li><li>🌐 Sites version premium 👑</li></ul><button class="mainbtn full" data-p="ultra">${cur==='ultra'?'Actuel ✔':'Activer gratuitement'}</button></div>
+    </div>
+    <div class="card"><b>📊 Tes crédits aujourd’hui</b><div class="small" style="margin-top:8px">💬 ${fmtQ(quotaLeft('chat',20))} messages · 🌐 ${fmtQ(quotaLeft('site',3))} sites · 🎨 ${fmtQ(quotaLeft('art',3))} images</div></div>
+    <div class="small">Les crédits sont renouvelés automatiquement chaque jour. Aucun paiement n’est activé dans V13.2.</div>
+  </div>`;
+  p.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{localStorage.setItem('openi_plan_'+key(),b.dataset.p);render();});
+}
+
+function payPanel(pl){ localStorage.setItem('openi_plan_'+key(),pl||'free'); render(); }
+
+function pageSettings(p){
+  const cfg=LS('princesse_engine_config',{provider:'openrouter',key:''});
+  try{localStorage.removeItem('princesse_engine_model');}catch{}
+  p.innerHTML=header('Paramètres','IA Princesse V13.2')+`<div class="section">
+    <div class="card"><b>🤖 Moteur IA pour les discussions et toute l’IA</b>
+      <p class="small" style="line-height:1.6">👑 IA Princesse a son propre moteur intégré, <b>100% gratuit</b> : aucune clé API à fournir. Il fonctionne directement ici, et aussi dans le fichier téléchargé une fois ouvert dans un navigateur.</p>
+      <div class="row" style="margin-top:10px"><button id="testEngine" class="ghost">🧪 Tester le moteur</button></div>
+      <div id="eng" class="badge" style="margin-top:12px">⚪ Non testé</div>
+      <details style="margin-top:16px">
+        <summary class="small" style="cursor:pointer">⚙️ Avancé : brancher ma propre clé API (optionnel)</summary>
+        <div style="margin-top:12px">
+          <p class="small" style="line-height:1.6">Réservé à ceux qui veulent un fournisseur précis (ex. leur propre compte OpenAI). Si une clé est enregistrée ici, elle prend le pas sur le moteur gratuit. Laisse vide pour rester sur le moteur gratuit intégré.</p>
+          <label class="small">Fournisseur</label>
+          <select id="aiProvider" class="field" style="width:100%;margin:8px 0 12px">
+            <option value="openrouter">OpenRouter</option><option value="openai">OpenAI</option><option value="gemini">Google Gemini</option><option value="groq">Groq</option><option value="mistral">Mistral</option>
+          </select>
+          <label class="small">Clé API</label>
+          <input id="aiKey" class="field" type="password" placeholder="Colle ta clé API ici (optionnel)" value="${esc(cfg.key||'')}">
+          <div id="geminiHint" class="small" style="margin-top:6px;display:none">Google Gemini : une clé Google AI Studio est envoyée directement à l’API Gemini native.</div>
+          <div class="row" style="margin-top:12px"><button id="saveEngine" class="mainbtn">💾 Enregistrer</button><button id="clearEngine" class="ghost dangerbtn">🗑️ Revenir au moteur gratuit</button></div>
+        </div>
+      </details>
+    </div>
+    <div class="card"><p>Pseudo : <b>${esc(me.pseudo)}</b></p><p>Email : <b>${esc(me.email)}</b></p><p>Abonnement : <b>${planName()}</b></p><p>Clé Openi active : <b>${esc(activeKeyId()||'aucune')}</b></p>
+      <button id="unlink" class="ghost dangerbtn">Retirer la clé active</button></div>
+    <div class="card"><b>⬇️ Télécharger l'application</b>
+      <p class="small" style="line-height:1.6">Récupère le fichier complet de IA Princesse (un seul .html), à jour avec ce que tu vois là.</p>
+      <button id="dlapp" class="mainbtn">⬇️ Télécharger IA Princesse V13.2</button></div>
+    ${securityCardHTML()}${extraCardHTML()}<div class="card"><b>🗑️ Données</b><p class="small">Efface les données enregistrées sur cet appareil.</p><button id="wipe" class="ghost dangerbtn">Tout effacer</button></div></div>`;
+  bindSecurityCard();bindExtraCard();
+  $('aiProvider').value=cfg.provider||'openrouter';
+  const refreshGemHint=()=>{ $('geminiHint').style.display=$('aiProvider').value==='gemini'?'block':'none'; }; refreshGemHint(); $('aiProvider').onchange=refreshGemHint;
+  $('saveEngine').onclick=()=>{const x={provider:$('aiProvider').value,key:$('aiKey').value.trim()};SET('princesse_engine_config',x);sampleFn=undefined;const e=$('eng');e.textContent=x.key?'🟢 Clé perso enregistrée':'⚪ Non testé';e.classList.toggle('ok',!!x.key)};
+  $('clearEngine').onclick=()=>{SET('princesse_engine_config',{provider:'openrouter',key:''});sampleFn=undefined;render()};
+  $('testEngine').onclick=async()=>{const e=$('eng');e.textContent='⏳ Test…';sampleFn=undefined;const fn=await engine();if(!fn){e.textContent='🔴 '+noEngineMsg();return}try{await fn([{role:'user',content:'Réponds uniquement : OK'}],{});e.textContent='🟢 Moteur IA fonctionne'}catch(err){e.textContent='🔴 '+esc(err.message)}};
+  $('unlink').onclick=()=>{localStorage.removeItem('openi_active_'+key());render()};
+  $('wipe').onclick=()=>{if(confirm('Tout effacer ?')){localStorage.clear();try{sessionStorage.clear()}catch(e){}location.reload()}};
+  $('dlapp').onclick=()=>saveFile('IA-Princesse-V13.2-2en1.html',PRISTINE||('<!doctype html>\n'+document.documentElement.outerHTML),'text/html');
+}
+
+/* ---------- onglet Mode Claude (protégé par mot de passe) ---------- */
+function pageClaudeMode(p){
+  const K='openi_claude_unlock_'+key();
+  const isUnlocked=localStorage.getItem(K)==='1';
+  if(!isUnlocked){
+    p.innerHTML=header('Mode Claude','Onglet protégé par mot de passe')+`<div class="section"><div class="card lock spark" style="text-align:center">
+      <div style="font-size:52px">🗝️</div>
+      <h2 style="margin:8px 0">Onglet protégé</h2>
+      <p class="small" style="line-height:1.6">Entre le mot de passe pour accéder à cet onglet.</p>
+      <input id="cpw" class="field" type="password" placeholder="Mot de passe" style="text-align:center">
+      <div id="cmsg" class="msg"></div>
+      <div class="row" style="justify-content:center"><button id="cgo" class="mainbtn">🔓 Déverrouiller</button></div>
+    </div></div>`;
+    $('cgo').onclick=()=>{
+      if(($('cpw').value||'').trim().toLowerCase()==='claude'){localStorage.setItem(K,'1');render()}
+      else{$('cmsg').textContent='Mot de passe incorrect.';$('cpw').value=''}
+    };
+    $('cpw').onkeydown=e=>{if(e.key==='Enter')$('cgo').click()};
+    $('cpw').focus();
+    return;
+  }
+  const msgs=store.claudeMsgs.filter(x=>x.userId===key());
+  p.innerHTML=header('Mode Claude','Discussion directe, sans mise en scène',`<button id="claudeLock" class="ghost">🔒 Reverrouiller</button>`)
+    +`<div class="chat-wrap"><div id="claudeChatBox" class="chat">${msgs.length?msgs.map(m=>bubble(m)).join(''):
+      `<div class="empty">🗝️ Ici tu parles directement à Claude, sans le personnage IA Princesse.</div>`}</div></div>
+     <div class="composer"><div id="cst" class="status"></div><div class="composerRow">
+       <textarea id="claudeInput" placeholder="Écris ton message à Claude…"></textarea>
+       <button id="claudeSend" class="mainbtn send">Envoyer</button></div></div>`;
+  $('claudeLock').onclick=()=>{localStorage.removeItem(K);render()};
+  const i=$('claudeInput');
+  i.oninput=()=>{i.style.height='46px';i.style.height=Math.min(i.scrollHeight,150)+'px'};
+  i.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendClaude()}};
+  $('claudeSend').onclick=sendClaude;
+  const wrap=document.querySelector('.chat-wrap');if(wrap)wrap.scrollTop=wrap.scrollHeight;
+  i.focus();
+}
+const CLAUDE_INSTR="Tu es Claude, l'assistant IA créé par Anthropic. Dans cet onglet précis (« Mode Claude »), tu réponds en ton nom propre, honnêtement : tu ne joues pas le personnage \"IA Princesse\" et tu ne prétends pas avoir été créé par \"Tissou\". Reste utile, clair, direct et fidèle à qui tu es réellement, en français sauf demande contraire.";
+async function sendClaude(){
+  if(busy)return;
+  const i=$('claudeInput'),text=i.value.trim();if(!text)return;
+  const fn=await engine(); if(!fn){$('cst').textContent='⚠️ Moteur IA indisponible dans cette vue.';return}
+  busy=true;i.value='';i.style.height='46px';
+  const msg={id:uid(),userId:key(),role:'user',text,time:Date.now()};
+  store.claudeMsgs.push(msg);save();
+  const box=$('claudeChatBox');if(box.querySelector('.empty'))box.innerHTML='';
+  box.insertAdjacentHTML('beforeend',bubble(msg));
+  const outRow=document.createElement('div');outRow.className='msgrow ai';
+  outRow.innerHTML=`<div class="avatar">🗝️</div><div class="msgcol ai"><div class="bubble ai"><span class="typing"><span></span><span></span><span></span></span></div><div class="msgmeta"></div></div>`;
+  box.appendChild(outRow);const out=outRow.querySelector('.bubble');
+  const wrap=document.querySelector('.chat-wrap');if(wrap)wrap.scrollTop=wrap.scrollHeight;
+  $('claudeSend').disabled=true;$('cst').textContent='⏳ Claude réfléchit…';
+  const hist=store.claudeMsgs.filter(x=>x.userId===key()).slice(-24).map(m=>({role:m.role==='user'?'user':'assistant',content:m.text}));
+  let full='';ctl=new AbortController();
+  try{
+    const r=await fn([{role:'user',content:CLAUDE_INSTR},{role:'assistant',content:'Compris.'},...hist],
+      {signal:ctl.signal,cache:false,modelTier:tier(),onText:({text})=>{full=text;out.innerHTML=fmt(text);if(wrap)wrap.scrollTop=wrap.scrollHeight}});
+    full=r.text||full;
+  }catch(e){ full=e?.text||''; $('cst').textContent='⚠️ '+(e.message||'Erreur du moteur.');
+    if(!full)out.innerHTML=fmt("Je n'ai pas pu répondre cette fois-ci. Réessaie dans un instant."); }
+  if(full){
+    const aiMsg={id:uid(),userId:key(),role:'assistant',text:full,time:Date.now()};
+    out.innerHTML=fmt(full);
+    const copyId=uid();MSGBIN[copyId]=full;
+    outRow.querySelector('.msgmeta').innerHTML=`<span>${fmtTime(aiMsg.time)}</span><button class="copyMsg" data-copy="${copyId}">📋 Copier</button>`;
+    store.claudeMsgs.push(aiMsg);save();
+  }
+  $('claudeSend').disabled=false;busy=false;if($('cst')&&$('cst').textContent.startsWith('⏳'))$('cst').textContent='';
+  i.focus();
+}
+
+/* ---------- démarrage ---------- */
+function start(){$('auth').classList.add('hidden');$('app').classList.remove('hidden');render();engine()}
+(function init(){
+  try{if(/reset=/.test(location.hash))history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+  const sid=sessGet();const u=sid?LS(USERS,[]).find(x=>x.id===sid):null;
+  if(u){enterApp(u,false);return}
+  if(sid)sessClear();
+  $('auth').classList.remove('hidden');$('app').classList.add('hidden');authMode(false);
+  if(!storageOK())setMsg($('authMsg'),'Ton navigateur bloque le stockage local (navigation privée ?) : ton compte ne pourra pas être enregistré.');
+  else if(!LS(USERS,[]).length)authMode(true);
+})();
+
+const PRO_CODE='005673';
+const proUnlocked=()=>{try{return localStorage.getItem('openi_pro_unlock_'+key())==='1'}catch(e){return false}};
+function extraCardHTML(){
+  const p=PROMODE();
+  return `<div class="card"><b>🧠 Mode de l'IA</b>
+    <p class="small" style="line-height:1.6;margin:6px 0 10px">Normal = rapide et simple. PRO = raisonnement renforcé, mémoire, meilleure qualité.</p>
+    <div class="tabs"><button id="modeNormal" type="button" class="${p?'':'active'}">⚪ Normal</button><button id="modePro" type="button" class="${p?'active':''}">🧠 PRO</button></div>
+    <div id="proCodeZone"></div></div>${p?memCardHTML():''}`;
+}
+function bindExtraCard(){
+  const set=v=>{try{localStorage.setItem('openi_mode',v)}catch(e){}render()};
+  $('modeNormal').onclick=()=>set('normal');
+  $('modePro').onclick=()=>{
+    if(PROMODE()||proUnlocked())return set('pro');
+    const zone=$('proCodeZone');
+    zone.innerHTML=`<div style="margin-top:12px"><p class="small" style="line-height:1.6">Le mode PRO est protégé par un code. Entre-le pour l'activer.</p>
+      <div class="row"><input id="proCodeIn" class="field" style="flex:1;min-width:140px" placeholder="Code PRO" inputmode="numeric">
+      <button id="proCodeGo" class="mainbtn">Valider</button></div>
+      <div id="proCodeMsg" class="msg"></div></div>`;
+    $('proCodeGo').onclick=()=>{
+      const v=($('proCodeIn').value||'').trim();
+      if(v===PRO_CODE){try{localStorage.setItem('openi_pro_unlock_'+key(),'1')}catch(e){}set('pro')}
+      else{$('proCodeMsg').textContent='Code incorrect.';$('proCodeIn').value='';$('proCodeIn').focus()}
+    };
+    $('proCodeIn').onkeydown=e=>{if(e.key==='Enter')$('proCodeGo').click()};
+    $('proCodeIn').focus();
+  };
+  bindMem();
+}
+</script>
+
+
+</body></html>
